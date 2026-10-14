@@ -91,8 +91,8 @@ TRANSLATIONS = {
     "trace.pefa_score": "Score PEFA",
     "trace.uhc_index": "Indice CSU",
     "trace.attendance_rate": "Taux de fréquentation des 6-17 ans",
-    "trace.learning_poverty": "taux de pauvreté des apprentissages",
-    "trace.inflation_adjusted_per_capita": "dépenses publiques par habitant ajustées à l'inflation",
+    "trace.learning_poverty": "Taux de pauvreté des apprentissages",
+    "trace.inflation_adjusted_per_capita": "Dépenses publiques par habitant ajustées à l'inflation",
     "trace.inflation_adjusted_per_capita_health": "Dépenses publiques par habitant ajustées à l'inflation",
 
     # --- Hover templates ---
@@ -510,7 +510,7 @@ TRANSLATIONS = {
     "narrative.subnat_rank_year": "En {year}, {pcc}",
     "narrative.subnat_rank_years": "En rapportant les dépenses de {year} aux résultats de {outcome_year}, {pcc}",
     "narrative.subnat_rank_roi": " Parmi les régions, le retour sur investissement (ROI) des dépenses publiques {func_de}, mesuré par {outcome_name}, a été le plus élevé pour {best} et le plus faible pour {worst}.",
-    "label.per_capita_expenditure_on": "Dépenses par habitant {func_prep}",
+    "label.per_capita_expenditure_on": "Dépenses par habitant {sector_prep}",
     # Lowercase form: includes the article "les" since its only consumer
     # is mid-sentence correlation narratives ("entre les dépenses par
     # habitant en santé et l'indice de santé"), where the bare form would

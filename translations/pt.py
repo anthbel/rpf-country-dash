@@ -92,8 +92,8 @@ TRANSLATIONS = {
     "trace.pefa_score": "Pontuação PEFA",
     "trace.uhc_index": "Índice de cobertura universal de saúde",
     "trace.attendance_rate": "Taxa de frequência escolar de 6 a 17 anos",
-    "trace.learning_poverty": "taxa de pobreza de aprendizagem",
-    "trace.inflation_adjusted_per_capita": "despesa pública per capita ajustada pela inflação",
+    "trace.learning_poverty": "Taxa de pobreza de aprendizagem",
+    "trace.inflation_adjusted_per_capita": "Despesa pública per capita ajustada pela inflação",
     "trace.inflation_adjusted_per_capita_health": "Despesa pública per capita ajustada pela inflação",
 
     # --- Hover / axis / radio labels ---
@@ -377,7 +377,7 @@ TRANSLATIONS = {
     "narrative.subnat_rank_year": "Em {year}, {pcc}",
     "narrative.subnat_rank_years": "Comparando a despesa de {year} com os resultados de {outcome_year}, {pcc}",
     "narrative.subnat_rank_roi": " Entre as regiões subnacionais, em termos de retorno sobre a despesa pública {func_prep} medido por {outcome_name}, {best} teve o maior retorno sobre investimento (ROI), enquanto {worst} teve o menor.",
-    "label.per_capita_expenditure_on": "Despesa per capita {func_prep}",
+    "label.per_capita_expenditure_on": "Despesa per capita {sector_prep}",
     "label.per_capita_expenditure_lower_on": "a despesa per capita {func_prep}",
 
     # --- Annotations / operational vs capital ---

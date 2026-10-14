@@ -88,8 +88,8 @@ TRANSLATIONS = {
     "trace.pefa_score": "PEFA Score",
     "trace.uhc_index": "Universal health coverage index",
     "trace.attendance_rate": "6-17yo attendance rate",
-    "trace.learning_poverty": "learning poverty rate",
-    "trace.inflation_adjusted_per_capita": "inflation adjusted per capita public spending",
+    "trace.learning_poverty": "Learning poverty rate",
+    "trace.inflation_adjusted_per_capita": "Inflation adjusted per capita public spending",
     "trace.inflation_adjusted_per_capita_health": "Inflation adjusted per capita public spending",
 
     # --- Hover templates ---

@@ -405,12 +405,14 @@ def update_func_expenditure_map(
         notes.append(t("annotation.displaying_data_from", lang, year=year))
     notes.append(t("source.boost_database", lang))
 
+    # English titles take the capitalised COFOG name ("Subnational Education
+    # Spending"); French and Portuguese the lowercase sector after "de".
     cofog_name = t(f"cofog.{func.lower()}", lang)
-    cofog_meta = t(f"cofog.{func.lower()}", lang, meta=True)
+    sector_meta = t(f"sector.{func.lower()}", lang, meta=True)
     fig.update_layout(
         title=t(
             "chart.subnational_func_spending", lang,
-            func=cofog_name, func_gen=genitive(lang, cofog_meta),
+            func=cofog_name, func_gen=genitive(lang, sector_meta),
         ),
         plot_bgcolor="white",
         coloraxis_colorbar=dict(
@@ -665,8 +667,14 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
         )
     )
 
+    # English labels take the capitalised COFOG name ("in Health"); French and
+    # Portuguese the lowercase sector ("en santé", "na saúde").
     cofog_meta = _LANGUAGES[lang].get(f"cofog.{func.lower()}")
-    per_capita_label = t("label.per_capita_expenditure_on", lang, func_prep=preposition(lang, cofog_meta))
+    sector_meta = _LANGUAGES[lang].get(f"sector.{func.lower()}")
+    per_capita_label = t(
+        "label.per_capita_expenditure_on", lang,
+        func_prep=preposition(lang, cofog_meta), sector_prep=preposition(lang, sector_meta),
+    )
     fig.add_annotation(
         x=0.1,
         y=1,
