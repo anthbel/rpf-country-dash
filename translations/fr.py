@@ -226,6 +226,7 @@ TRANSLATIONS = {
     "func_sub.transport":                    "Transports",
     "func_sub.water_supply":                 "Approvisionnement en eau",
     "func_sub.water_transport":              "Transport maritime",
+    "func_sub.unallocated":                  "Non réparti par niveau",
 
     "country.Albania": {"name": "Albanie", "plural": False, "feminine": True},
     "country.Bangladesh": {"name": "Bangladesh", "plural": False, "feminine": False},

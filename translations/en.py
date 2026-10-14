@@ -207,6 +207,7 @@ TRANSLATIONS = {
     "func_sub.transport":                    "Transport",
     "func_sub.water_supply":                 "Water Supply",
     "func_sub.water_transport":              "Water Transport",
+    "func_sub.unallocated":                  "Not broken down by level",
 
     "country.Albania": {"name": "Albania", "plural": False, "feminine": False},
     "country.Bangladesh": {"name": "Bangladesh", "plural": False, "feminine": False},

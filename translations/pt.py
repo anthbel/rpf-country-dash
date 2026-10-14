@@ -223,6 +223,7 @@ TRANSLATIONS = {
     "func_sub.transport": "Transporte",
     "func_sub.water_supply": "Abastecimento de água",
     "func_sub.water_transport": "Transporte aquaviário",
+    "func_sub.unallocated":                  "Sem desagregação por nível",
 
     # --- Metric names ---
     "metric.total_real_expenditure": {"name": "a despesa real total", "plural": False, "feminine": True, "article": "a"},

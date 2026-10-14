@@ -72,8 +72,14 @@ def render_func_subnat_overview(func_econ_data, sub_func_data, country, selected
             t("error.data_unavailable", lang),
         )
 
+    sector_total = None
+    if not data_by_func_admin0.empty:
+        sector_total = (
+            data_by_func_admin0["expenditure"].sum(),
+            data_by_func_admin0["real_expenditure"].sum(),
+        )
     fig1 = _central_vs_regional_fig(data_by_func_sub_geo0, func, currency_code, lang=lang)
-    fig2 = _sub_func_fig(data_by_func_sub_geo0, func, currency_code, lang=lang)
+    fig2 = _sub_func_fig(data_by_func_sub_geo0, func, currency_code, lang=lang, sector_total=sector_total)
 
     narrative = _sub_func_narrative(
         data_by_func_admin0, data_by_func_sub_geo0, country, selected_year, func, lang=lang
@@ -167,7 +173,21 @@ def _central_vs_regional_fig(data, func, currency_code, lang="en"):
     return apply_locale(fig, lang)
 
 
-def _sub_func_fig(data, func, currency_code, lang="en"):
+# The treemap box of the sector's spending that has no sub-function.
+UNALLOCATED_ID = "Not broken down by level"
+UNALLOCATED_COLOR = "#BDBDBD"
+# Smallest label size drawn; a box too small for it shows its label on hover.
+TREEMAP_MIN_TEXT_SIZE = 11
+
+
+def _sub_func_fig(data, func, currency_code, lang="en", sector_total=None):
+    """Treemap of the sector's spending by sub-function, each split by geo0.
+
+    ``sector_total`` is the sector's (expenditure, real_expenditure) for the
+    year; without it, the sum of ``data``, which also holds the rows without
+    a sub-function. What the sub-functions leave of it is a box of its own,
+    so the boxes add up to the sector and the shares are shares of it.
+    """
     func_lower = t(f"sector.{func.lower()}", lang)
     func_meta = t(f"sector.{func.lower()}", lang, meta=True)
     fig_title = t(
@@ -180,7 +200,9 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
         return empty_plot(t("error.no_data_period", lang), fig_title)
 
     fig = go.Figure()
-    total = data.expenditure.sum()
+    if sector_total is None:
+        sector_total = (data.expenditure.sum(), data.real_expenditure.sum())
+    total, real_total = sector_total
     ids = []
     parents = []
     labels = []
@@ -201,10 +223,24 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
         ids.append(row.func_sub)
         parents.append("")
         sub_label = translate_func_sub(row.func_sub, lang)
-        labels.append(f"{sub_label}<br>{format_currency(row.expenditure, currency_code, lang=lang)} ({percent_of_total:.0f}%)")
+        # One line: a box header has room for one.
+        labels.append(f"{sub_label} · {format_currency(row.expenditure, currency_code, lang=lang)} ({percent_of_total:.0f}%)")
         values.append(row.expenditure)
         hover_texts.append(f"{t('hover.real_expenditure', lang)}: {format_currency(row.real_expenditure, currency_code, lang=lang)}")
         colors.append(base_color)
+
+    unallocated = total - education_values.expenditure.sum()
+    if unallocated > abs(total) * 1e-6:
+        ids.append(UNALLOCATED_ID)
+        parents.append("")
+        labels.append(
+            f"{t('func_sub.unallocated', lang)}<br>{format_currency(unallocated, currency_code, lang=lang)}"
+            f" ({unallocated / total * 100:.0f}%)"
+        )
+        values.append(unallocated)
+        real_unallocated = real_total - education_values.real_expenditure.sum()
+        hover_texts.append(f"{t('hover.real_expenditure', lang)}: {format_currency(real_unallocated, currency_code, lang=lang)}")
+        colors.append(UNALLOCATED_COLOR)
 
     data_grouped = (
         data.groupby(["func_sub", "geo0"], sort=False).sum(numeric_only=True).reset_index()
@@ -235,6 +271,7 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
             values=values,
             branchvalues="total",
             textinfo="label",
+            textfont=dict(size=14),
             hovertemplate="<b>%{label}</b><br>%{customdata}<extra></extra>",
             customdata=hover_texts,
             marker=dict(colors=colors),
@@ -246,6 +283,7 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
         plot_bgcolor="white",
         title=fig_title,
         margin=dict(l=15, r=15, b=15),
+        uniformtext=dict(minsize=TREEMAP_MIN_TEXT_SIZE, mode="hide"),
     )
 
     return apply_locale(fig, lang)
