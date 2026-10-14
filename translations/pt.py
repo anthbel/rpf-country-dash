@@ -248,7 +248,7 @@ TRANSLATIONS = {
     "narrative.no_regional_data": "O BOOST não tem dados de despesa local/regional para {country}. ",
     "narrative.central_spending_change": "Neste período, a despesa ajustada pela inflação do governo central {change_text} ",
     "narrative.subnational_spending_change": "enquanto a despesa ajustada pela inflação do governo subnacional {change_text}. ",
-    "narrative.subnational_unavailable": ". Os dados do governo subnacional não estão disponíveis para este período. ",
+    "narrative.subnational_unavailable": ". Nenhuma despesa dos governos subnacionais está registrada em {year}, primeiro ano do período, por isso a variação dessa despesa não pode ser calculada. ",
     "narrative.decentralization_by_year": "Em {year}, {pct} da despesa {sector_gen} foi descentralizada.",
     "narrative.decentralization_unknown": "O grau de descentralização da despesa {sector_gen} é desconhecido devido à falta de dados de despesa pública subnacional.",
     "narrative.govt_share_trend": "{country_loc}, a parcela do governo na despesa {sector_prep} {trend} de {earliest_pct} para {latest_pct} entre {earliest_year} e {latest_year}. ",

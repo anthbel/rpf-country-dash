@@ -574,10 +574,10 @@ def health_narrative(data, country, lang="en"):
             end_value_decentralized - start_value_decentralized
         ) / start_value_decentralized
         spending_change_regional = t("narrative.subnational_spending_change", lang, change_text=get_percentage_change_text(spending_growth_rate_decentralized, lang=lang))
+        text += spending_change_regional
     else:
-        spending_change_regional = t("narrative.subnational_unavailable", lang)
-
-    text += spending_change_regional
+        # This sentence closes the central-spending one rather than continuing it.
+        text = text.rstrip() + t("narrative.subnational_unavailable", lang, year=start_year)
 
     decentralization = spending[
         spending.year == end_year

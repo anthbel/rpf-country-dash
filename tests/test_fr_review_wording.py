@@ -47,8 +47,9 @@ class FixedStringsTest(unittest.TestCase):
 
     def test_subnational_and_decentralization_sentences(self):
         self.assertEqual(
-            t("narrative.subnational_unavailable", "fr").strip(" ."),
-            "Les données des collectivités territoriales ne sont pas disponibles pour cette période",
+            t("narrative.subnational_unavailable", "fr", year=2021).strip(" ."),
+            "Aucune dépense des collectivités territoriales n'est enregistrée pour 2021, première "
+            "année de la période : l'évolution de leurs dépenses ne peut donc pas être calculée",
         )
         self.assertEqual(
             t("narrative.decentralization_unknown", "fr", sector_gen="de la santé", sector="santé"),

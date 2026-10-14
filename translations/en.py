@@ -257,7 +257,7 @@ TRANSLATIONS = {
     # --- Narrative templates: Spending ---
     "narrative.central_spending_change": "In this time period, the central government's inflation-adjusted spending has {change_text} ",
     "narrative.subnational_spending_change": "while the subnational government's inflation-adjusted spending has {change_text}. ",
-    "narrative.subnational_unavailable": ". The subnational government's data is not available for this period. ",
+    "narrative.subnational_unavailable": ". No spending by subnational governments is recorded for {year}, the first year of the period, so the change in their spending cannot be computed. ",
     "narrative.decentralization_by_year": "By {year}, {pct} of {sector} spending has been decentralized.",
     "narrative.decentralization_unknown": "The extent of {sector} spending decentralization is unknown due to a lack of subnational public expenditure data.",
 
