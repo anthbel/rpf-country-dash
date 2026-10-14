@@ -8,7 +8,6 @@ budget is zero.
 """
 import math
 
-import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -24,7 +23,7 @@ from components.budget_funding_execution import (
 from constants import END_YEAR, EXECUTION_VIEW_COUNTRIES
 from translations import t
 from utils import apply_locale, empty_plot, format_currency, format_year_axis
-from viz_theme import DIVERGING_SCALE, QUALITATIVE
+from viz_theme import DIVERGING_SCALE, QUALITATIVE, QUALITATIVE_ALT
 
 CURRENCY_CODE = "XOF"
 
@@ -61,6 +60,8 @@ TAGGED_CODES = {
 INITIAL_COLOR = QUALITATIVE[0]
 FINAL_COLOR = QUALITATIVE[1]
 ORDERED_COLOR = QUALITATIVE[3]
+# One distinct colour for each of up to 18 tag codes (the green tagging has 17 and blanks).
+TAG_PALETTE = QUALITATIVE + QUALITATIVE_ALT
 
 _LOCALES = {"en": "en_US", "fr": "fr_FR", "pt": "pt_BR"}
 
@@ -371,10 +372,10 @@ def _source_note(fig, lang):
     fig.add_annotation(
         text=t("source.boost_wb", lang),
         xref="paper", yref="paper", x=0, y=0,
-        xanchor="left", yanchor="top", yshift=-48,
+        xanchor="left", yanchor="top", yshift=-64,
         showarrow=False, font=dict(size=11),
     )
-    fig.update_layout(margin=dict(b=90))
+    fig.update_layout(margin=dict(b=100))
     return fig
 
 
@@ -452,9 +453,11 @@ def ministries_figure(ministries, lang="en"):
     full_names = [label_or_unspecified(v, lang) for v in rows["admin2"]]
     rates = [format_rate(r, lang) for r in rows["rate"]]
     fig = go.Figure()
+    # Within a group plotly also draws the first trace at the bottom, so the
+    # final budget goes last to sit above the ordered amount.
     for col, key, color in (
-        ("dotation_finale", "execution.measure.dotation_finale", FINAL_COLOR),
         ("ordonnancer", "execution.measure.ordonnancer", ORDERED_COLOR),
+        ("dotation_finale", "execution.measure.dotation_finale", FINAL_COLOR),
     ):
         name = t(key, lang)
         fig.add_trace(go.Bar(
@@ -472,7 +475,7 @@ def ministries_figure(ministries, lang="en"):
         title=t("execution.chart.ministries", lang),
         plot_bgcolor="white",
         height=max(450, 26 * len(rows) + 160),
-        legend=dict(orientation="h", yanchor="bottom", y=1.0),
+        legend=dict(orientation="h", yanchor="bottom", y=1.0, traceorder="reversed"),
         bargap=0.25,
     )
     return apply_locale(_source_note(fig, lang), lang)
@@ -566,7 +569,7 @@ def tag_figure(shares, dim, lang="en"):
         fig.add_trace(go.Bar(
             name=name, y=bars, orientation="h",
             x=[row["share_finale"] * 100, row["share_ordonnancer"] * 100],
-            marker_color=QUALITATIVE[i % len(QUALITATIVE)],
+            marker_color=TAG_PALETTE[i % len(TAG_PALETTE)],
             customdata=amounts,
             hovertemplate="<b>" + name + "</b>: %{x:.1f}% (%{customdata})<extra></extra>",
         ))
@@ -576,36 +579,42 @@ def tag_figure(shares, dim, lang="en"):
         barmode="stack",
         title=t(f"execution.chart.{dim}", lang),
         plot_bgcolor="white",
-        height=360,
-        legend=dict(orientation="h", yanchor="top", y=-0.25),
-        margin=dict(b=140),
+        height=max(360, 24 * len(shares) + 220),
+        legend=dict(orientation="v", x=1.02, y=1, traceorder="normal"),
     )
-    fig = _source_note(fig, lang)
-    fig.update_layout(margin=dict(b=140))
-    return apply_locale(fig, lang)
+    return apply_locale(_source_note(fig, lang), lang)
 
 
 # --- Tables ----------------------------------------------------------------
+
+# Plain HTML tables: the Bootstrap theme colours .table cells.
+_TABLE = {"width": "100%", "borderCollapse": "collapse", "fontSize": "0.875rem"}
+_CELL = {"padding": "4px 8px", "borderBottom": "1px solid #dee2e6", "verticalAlign": "top"}
+_TEXT_CELL = _CELL
+_NUMBER_CELL = {**_CELL, "textAlign": "right", "whiteSpace": "nowrap"}
+_HEADER_CELL = {**_CELL, "borderBottom": "2px solid #002244", "position": "sticky", "top": 0,
+                "background": "white"}
+
 
 def amount_table(rows, columns, lang="en", total=None):
     """A table of ``rows``; ``columns`` lists (header, key, kind), kind being
     "text", "amount" or "rate". ``total`` is an optional last row (a dict)."""
     def cell(value, kind, tag=html.Td):
         if kind == "amount":
-            return tag(format_amount(value, lang), className="text-end text-nowrap")
+            return tag(format_amount(value, lang), style=_NUMBER_CELL)
         if kind == "rate":
-            return tag(format_rate(value, lang), className="text-end text-nowrap")
-        return tag(value)
+            return tag(format_rate(value, lang), style=_NUMBER_CELL)
+        return tag(value, style=_TEXT_CELL)
 
     head = html.Thead(html.Tr([
-        html.Th(header, className="text-end" if kind != "text" else None)
+        html.Th(header, style={**_HEADER_CELL, "textAlign": "left" if kind == "text" else "right"})
         for header, _, kind in columns
     ]))
     body = [html.Tr([cell(row[key], kind) for _, key, kind in columns]) for row in rows]
     if total is not None:
         body.append(html.Tr([cell(total.get(key, ""), kind, html.Th) for _, key, kind in columns]))
     return html.Div(
-        dbc.Table([head, html.Tbody(body)], bordered=False, hover=True, size="sm", striped=True),
+        html.Table([head, html.Tbody(body)], style=_TABLE),
         style={"maxHeight": "520px", "overflowY": "auto"},
     )
 

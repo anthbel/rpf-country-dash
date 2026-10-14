@@ -98,12 +98,8 @@ def render_execution_content(lang):
             *_section(
                 "execution.heading.ministries", lang,
                 _narrative("execution-ministries-narrative", lang),
-                dbc.Row(
-                    [
-                        dbc.Col(_graph("execution-ministries"), xs=12, lg=7),
-                        dbc.Col(html.Div(id="execution-ministries-table"), xs=12, lg=5),
-                    ]
-                ),
+                dbc.Row(dbc.Col(_graph("execution-ministries"))),
+                dbc.Row(dbc.Col(html.Div(id="execution-ministries-table"))),
             ),
             *_section(
                 "execution.heading.ministry_nature", lang,
@@ -128,17 +124,14 @@ def render_execution_content(lang):
             *_section(
                 "execution.heading.investment", lang,
                 _narrative("execution-investment-narrative", lang),
+                dbc.Row(dbc.Col(_graph("execution-investment"))),
                 dbc.Row(
-                    [
-                        dbc.Col(_graph("execution-investment"), xs=12, lg=5),
-                        dbc.Col(
-                            [
-                                html.H5(t("execution.heading.top_projects", lang)),
-                                html.Div(id="execution-projects-table"),
-                            ],
-                            xs=12, lg=7,
-                        ),
-                    ]
+                    dbc.Col(
+                        [
+                            html.H5(t("execution.heading.top_projects", lang)),
+                            html.Div(id="execution-projects-table"),
+                        ]
+                    )
                 ),
             ),
             *tags,
