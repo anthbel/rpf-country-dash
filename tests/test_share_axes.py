@@ -35,7 +35,8 @@ class ShareAxesTest(unittest.TestCase):
             "Non-wage recurrent": [30.0, 28.0], "Capital expenditures": [10.0, 10.0],
         })
         fig = _generate_econ_figure(df, "Education", lang="fr")
-        self.assertEqual(fig.layout.yaxis.ticksuffix, "%")
+        # Plotly leaves ticksuffix off ticks placed with tickvals; the labels carry it.
+        self.assertEqual(list(fig.layout.yaxis.ticktext), ["20%", "40%", "60%", "80%", "100%"])
 
 
 if __name__ == "__main__":
