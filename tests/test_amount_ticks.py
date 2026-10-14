@@ -3,7 +3,8 @@
 Plotly prints its own short-scale suffixes on an amount axis ("200B",
 "1.5T", "26k") whatever the language. The helpers in utils place round tick
 values over the plotted data and label them with millify's suffixes
-(" Md", " Bn" in French, " bi", " tri" in Portuguese, " B", " T" in English).
+(" Md" in French, up to milliards; " bi", " tri" in Portuguese; " B", " T"
+in English).
 """
 
 import unittest
@@ -25,7 +26,7 @@ class AmountTicksTest(unittest.TestCase):
     def test_about_five_round_steps_from_zero(self):
         values, labels = amount_ticks(0, 2.1e12, lang="fr")
         self.assertEqual(values, [0, 0.5e12, 1e12, 1.5e12, 2e12, 2.5e12])
-        self.assertEqual(labels, ["0", "0,5 Bn", "1,0 Bn", "1,5 Bn", "2,0 Bn", "2,5 Bn"])
+        self.assertEqual(labels, ["0", "500 Md", "1\u202f000 Md", "1\u202f500 Md", "2\u202f000 Md", "2\u202f500 Md"])
 
     def test_zero_is_a_tick_even_when_the_data_starts_above_it(self):
         values, _ = amount_ticks(4e11, 2.1e12, lang="fr")
@@ -62,7 +63,11 @@ class MillifyDecimalsTest(unittest.TestCase):
         self.assertEqual(millify(2_000_000_000, lang="fr"), "2,00 Md")
 
     def test_decimals_and_a_forced_magnitude(self):
-        self.assertEqual(millify(500e9, lang="fr", decimals=1, magnitude=4), "0,5 Bn")
+        self.assertEqual(millify(500e6, lang="fr", decimals=1, magnitude=3), "0,5 Md")
+
+    def test_french_amounts_stay_in_milliards_with_grouped_thousands(self):
+        self.assertEqual(millify(3.5e12, lang="fr"), "3\u202f500,00 Md")
+        self.assertEqual(millify(-1.25e12, lang="fr", decimals=1), "-1\u202f250,0 Md")
 
 
 class ApplyAmountAxisTest(unittest.TestCase):
@@ -73,7 +78,7 @@ class ApplyAmountAxisTest(unittest.TestCase):
         ])
         fig.update_layout(barmode="stack")
         apply_amount_axis(fig, "yaxis", lang="fr")
-        # The 2022 stack reaches 1,3 Bn; a single bar never passes 0,7 Bn.
+        # The 2022 stack reaches 1 300 Md; a single bar never passes 700 Md.
         self.assertGreaterEqual(max(fig.layout.yaxis.tickvals), 1.3e12)
         self.assertEqual(fig.layout.yaxis.tickmode, "array")
 

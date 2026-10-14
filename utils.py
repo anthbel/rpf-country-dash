@@ -152,14 +152,22 @@ def filter_country_sort_year(df, country, start_year=START_YEAR, end_year=END_YE
 
 # Magnitude suffixes per language.
 #   EN: the standard K / M / B / T short-scale abbreviations.
-#   FR: French long-scale conventions — "Md" for milliard (10^9) and "Bn"
-#   for billion (10^12, which is *not* the same as EN "B" = 10^9). Lower-
-#   case "k" matches French typography ("100 k€") but upper-case "K" is
-#   also accepted; sticking to lowercase for correctness.
+#   FR: lowercase "k" as in French typography ("100 k€"), then "M" and "Md"
+#   (milliard, 10^9). Larger amounts stay in milliards ("1 500 Md"), the
+#   unit of French-language public-finance documents; "billion" would read
+#   as the English 10^9.
 _MILLNAMES = {
     "en": ["", " K", " M", " B", " T"],
-    "fr": ["", " k", " M", " Md", " Bn"],
+    "fr": ["", " k", " M", " Md"],
     "pt": ["", " mil", " M", " bi", " tri"],
+}
+
+# Decimal mark, then thousands mark, per language (plotly's ``separators``
+# format). French groups thousands with a narrow no-break space (as Babel's
+# fr_FR does), Brazilian Portuguese with a dot. English keeps ".,".
+_NUMBER_SEPARATORS = {
+    "fr": ",\u202f",
+    "pt": ",.",
 }
 
 
@@ -179,7 +187,7 @@ def millify(n, lang="en", decimals=2, magnitude=None):
     """Compress ``n`` to a magnitude-suffixed string.
 
     * English: ``"1.50 M"`` / ``"2.00 B"`` / ``"3.50 T"``.
-    * French: ``"1,50 M"`` / ``"2,00 Md"`` / ``"3,50 Bn"``.
+    * French: ``"1,50 M"`` / ``"2,00 Md"`` / ``"3\u202f500,00 Md"``.
     * Portuguese: ``"1,50 M"`` / ``"2,00 bi"`` / ``"3,50 tri"``.
 
     ``decimals`` sets the digits after the decimal mark. ``magnitude`` forces
@@ -192,10 +200,14 @@ def millify(n, lang="en", decimals=2, magnitude=None):
     names = _MILLNAMES.get(lang, _MILLNAMES["en"])
     millidx = _magnitude(n, names) if magnitude is None else magnitude
 
-    result = "{:.{}f}{}".format(n / 10 ** (3 * millidx), decimals, names[millidx])
-    if lang in {"fr", "pt"}:
-        result = result.replace(".", ",")
-    return result
+    number = "{:,.{}f}".format(n / 10 ** (3 * millidx), decimals)
+    separators = _NUMBER_SEPARATORS.get(lang)
+    if separators:
+        decimal, thousands = separators
+        number = "".join(
+            decimal if c == "." else thousands if c == "," else c for c in number
+        )
+    return number + names[millidx]
 
 
 # Plotly writes negative tick labels with the minus sign, not a hyphen.
@@ -224,8 +236,8 @@ def amount_ticks(low, high, lang="en", target=5, include_zero=True):
     The values are the multiples of a round step (see ``_nice_step``) from
     just below ``low`` to just above ``high``, about ``target`` of them, with
     0 among them when ``include_zero``. The labels share the suffix of the
-    largest value and as many decimals as the step needs: "0", "0,5 Bn",
-    "1,0 Bn" in French. Returns two empty lists when there is no span.
+    largest value and as many decimals as the step needs: "0", "500 Md",
+    "1\u202f000 Md" in French. Returns two empty lists when there is no span.
     """
     if low is None or high is None or pd.isna(low) or pd.isna(high):
         return [], []
@@ -697,22 +709,13 @@ def format_currency_yaxis(fig, currency_name, y_title, x_format="d"):
     return fig
 
 
-# Plotly's ``separators``: decimal mark, then thousands mark. French groups
-# thousands with a narrow no-break space (as Babel's fr_FR does), Brazilian
-# Portuguese with a dot.
-_PLOTLY_SEPARATORS = {
-    "fr": ",\u202f",
-    "pt": ",.",
-}
-
-
 def apply_locale(fig, lang="en"):
     """Set plotly's number-format locale on ``fig`` so its native renderers
     (hovertemplate format specs like ``%{y:.2f}%``, axis tick labels, etc.)
     produce the language's decimal and thousands marks. English keeps
     plotly's defaults.
     """
-    separators = _PLOTLY_SEPARATORS.get(lang)
+    separators = _NUMBER_SEPARATORS.get(lang)
     if separators:
         fig.update_layout(separators=separators)
     return fig

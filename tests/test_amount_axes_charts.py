@@ -1,6 +1,6 @@
 """Every amount axis and amount colour bar carries the dashboard's suffixes.
 
-In French an amount axis reads "200 Md" / "1,5 Bn", not plotly's "200B" /
+In French an amount axis reads "200 Md" / "1 500 Md", not plotly's "200B" /
 "1,5T". Each test builds one chart from a small frame and checks the axis
 the amounts are drawn on.
 """
@@ -21,7 +21,7 @@ from components import togo_execution as te  # noqa: E402
 from pages import education, health, home  # noqa: E402
 
 YEARS = [2021, 2022, 2023]
-FR_SUFFIXES = (" k", " M", " Md", " Bn")
+FR_SUFFIXES = (" k", " M", " Md")
 
 GEOJSON = {
     "type": "FeatureCollection",
@@ -60,7 +60,7 @@ class OverviewAmountAxesTest(unittest.TestCase):
     def test_total_expenditure(self):
         fig = home.total_figure(self._national(), "francs CFA", "XOF", lang="fr")
         _labels_amounts(self, fig.layout.yaxis)
-        self.assertIn("1,5 Bn", fig.layout.yaxis.ticktext)
+        self.assertIn("1\u202f500 Md", fig.layout.yaxis.ticktext)
 
     def test_per_capita_expenditure(self):
         fig = home.per_capita_figure(self._national(), "francs CFA", "XOF", lang="fr")

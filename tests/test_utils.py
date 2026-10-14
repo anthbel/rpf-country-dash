@@ -338,10 +338,10 @@ class TestMillify(unittest.TestCase):
         # long-scale — so we use "Md" (milliard).
         self.assertEqual(millify(2_000_000_000, lang="fr"), "2,00 Md")
 
-    def test_fr_trillions_uses_bn_not_t(self):
-        # 10^12: EN "T" (trillion short-scale) becomes FR "Bn" (billion
-        # long-scale, i.e. 10^12 in French).
-        self.assertEqual(millify(3_500_000_000_000, lang="fr"), "3,50 Bn")
+    def test_fr_trillions_stay_in_milliards(self):
+        # 10^12 is written in milliards, with the thousands grouped by a
+        # narrow no-break space: "3 500,00 Md".
+        self.assertEqual(millify(3_500_000_000_000, lang="fr"), "3\u202f500,00 Md")
 
     def test_fr_small_number_has_comma_no_suffix(self):
         self.assertEqual(millify(750, lang="fr"), "750,00")
