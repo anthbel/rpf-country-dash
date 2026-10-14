@@ -155,11 +155,23 @@ class NarrativeTest(unittest.TestCase):
         self.assertIn("680,00 XOF", text)
         self.assertIn("75,6 %", text)
 
-    def test_stages_narrative_and_external_note(self):
+    def test_stages_narrative(self):
         text = te.stages_narrative(te.spending_stages(_df(), YEAR), YEAR, lang="fr")
         self.assertIn("47,8 %", text)  # 430 / 900 engaged
         self.assertIn("44,1 %", text)  # 300 / 680 ordered on external resources
-        self.assertTrue(t("execution.note.external", "fr"))
+
+    def test_external_note_when_external_lines_carry_no_commitment(self):
+        note = te.external_note(te.spending_stages(_df(), YEAR), YEAR, lang="fr")
+        self.assertEqual(note, t("execution.note.external_none", "fr", year=YEAR))
+
+    def test_external_note_states_the_amounts_otherwise(self):
+        raw = execution_frame()
+        raw.loc[2, ["engagement", "liquidation"]] = [56805200, 55848869]
+        stages = te.spending_stages(te.normalise_execution(raw), YEAR)
+        note = te.external_note(stages, YEAR, lang="fr")
+        self.assertIn("56,81 M XOF", note)
+        self.assertIn("55,85 M XOF", note)
+        self.assertIn("300,00 XOF", note)
 
     def test_tag_narrative_uses_the_tagged_codes(self):
         text = te.tag_narrative(te.tag_shares(_df(), YEAR, "social"), "social", YEAR, lang="fr")

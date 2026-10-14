@@ -93,7 +93,6 @@ def render_execution_content(lang):
             *_section(
                 "execution.heading.stages", lang,
                 _narrative("execution-stages-narrative", lang),
-                dbc.Row(dbc.Col(html.P(t("execution.note.external", lang), className="text-muted"))),
                 dbc.Row(dbc.Col(_graph("execution-stages"))),
             ),
             *_section(

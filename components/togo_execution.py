@@ -285,6 +285,18 @@ def stages_narrative(stages, year, lang="en"):
     )
 
 
+def external_note(stages, year, lang="en"):
+    """What external-resource lines carry before the payment-order stage."""
+    engaged, liquidated = stages["engagement_re"], stages["liquidation_re"]
+    if not engaged and not liquidated:
+        return t("execution.note.external_none", lang, year=year)
+    return t(
+        "execution.note.external_some", lang, year=year,
+        engaged=_money(engaged, lang), liquidated=_money(liquidated, lang),
+        ordered=_money(stages["ordonnancer_re"], lang),
+    )
+
+
 def ministries_narrative(ministries, year, lang="en"):
     funded = ministries[ministries["dotation_finale"] > 0]
     if funded.empty:
@@ -673,7 +685,10 @@ def render_stages(df, year, lang="en"):
     if df is None or year is None:
         return unavailable(lang)
     stages = spending_stages(df, year)
-    return stages_figure(stages, lang), stages_narrative(stages, year, lang)
+    narrative = stages_narrative(stages, year, lang)
+    if stages["dotation_finale"]:
+        narrative = f"{narrative} {external_note(stages, year, lang)}"
+    return stages_figure(stages, lang), narrative
 
 
 def render_ministries(df, year, lang="en"):
