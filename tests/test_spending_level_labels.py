@@ -81,6 +81,11 @@ class GeographicSplitTest(unittest.TestCase):
         fig = space._central_vs_regional_fig(self._data(), "Education", "XOF", lang="en")
         self.assertEqual(list(fig.data[0].labels), ["Not geographically allocated", "Geographically allocated"])
 
+    def test_donut_shares_share_one_precision(self):
+        # Plotly's default writes 3 significant digits: 6,63 % beside 93,4 %.
+        fig = space._central_vs_regional_fig(self._data(), "Education", "XOF", lang="fr")
+        self.assertEqual(fig.data[0].texttemplate, "%{percent:.1%}")
+
     def test_treemap_boxes_use_the_same_labels(self):
         fig = space._sub_func_fig(self._data(), "Education", "XOF", lang="fr")
         children = [label for label, parent in zip(fig.data[0].labels, fig.data[0].parents) if parent]

@@ -159,6 +159,7 @@ def _central_vs_regional_fig(data, func, currency_code, lang="en"):
                 values=central_vs_regional["real_expenditure"],
                 hole=0.5,
                 marker=dict(colors=[CENTRAL_COLOR, REGIONAL_COLOR]),
+                texttemplate="%{percent:.1%}",
                 customdata=np.stack(central_vs_regional["real_expenditure_formatted"]),
                 hovertemplate="<b>%{label}</b><br>" + t("hover.real_expenditure", lang)
                 + ": %{customdata}<extra></extra>",
