@@ -707,7 +707,7 @@ def functional_figure(df, lang="en"):
         )
 
     format_year_axis(fig)
-    fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(fixedrange=True, ticksuffix="%")
     fig.update_layout(
         barmode="stack",
         title=t("chart.sector_prioritization", lang),
@@ -1257,7 +1257,7 @@ def economic_figure(df, currency_code, lang="en"):
         )
 
     format_year_axis(fig)
-    fig.update_yaxes(fixedrange=True)
+    fig.update_yaxes(fixedrange=True, ticksuffix="%")
     fig.update_layout(
         barmode="stack",
         title=t("chart.econ_category_spending", lang),

@@ -759,6 +759,8 @@ def render_public_private_figure(private_data, public_data, country, country_dat
     fig.update_yaxes(type="category", categoryorder="category ascending")
     # Label every third year on long series to keep the axis readable.
     fig.update_yaxes(tickvals=[str(y) for y in year_ticks(merged["year"])])
+    # The shares are fractions of the year's total.
+    fig.update_xaxes(tickformat=".0%")
 
     narrative = public_private_narrative(merged, country, lang=lang)
     return apply_locale(fig, lang), narrative
