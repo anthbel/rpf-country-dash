@@ -16,7 +16,7 @@ from tests.execution_fixture import (
     execution_frame,
 )
 
-SHEETS = ["Natures", "Fonctions", "Ministères × natures", "Programmes", "Projets",
+SHEETS = ["Natures", "Fonctions", "Ministères × natures", "Programmes", "Investissements",
           "Genre", "Budget vert", "Dépenses sociales"]
 
 
@@ -88,7 +88,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(mef[_column(ws, "DEPENSES EN CAPITAL — Dotation finale") - 1], 650)
 
     def test_projects_hold_the_capital_lines(self):
-        ws = self.wb["Projets"]
+        ws = self.wb["Investissements"]
         self.assertEqual(_total(ws, "Dotation finale"), 650)
         self.assertEqual(_total(ws, "Ordonnancement"), 460)
         funder = next(r for r in _body(ws) if r[0] == "P2")[_column(ws, "Bailleur") - 1]

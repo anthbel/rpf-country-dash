@@ -2,7 +2,7 @@
 
 One sheet per table, French headers, amounts in whole XOF, rates as
 percentages. Every sheet ends with a total row; the sheets that cover all
-lines (all but « Projets », which holds capital lines) add up to the same
+lines (all but « Investissements », which holds capital lines) add up to the same
 totals as « Natures ».
 """
 import io
