@@ -508,6 +508,7 @@ TRANSLATIONS = {
 
     # --- Subnational rank narrative ---
     "narrative.subnat_rank_year": "En {year}, {pcc}",
+    "narrative.subnat_rank_years": "En rapportant les dépenses de {year} aux résultats de {outcome_year}, {pcc}",
     "narrative.subnat_rank_roi": " Parmi les régions, le retour sur investissement (ROI) des dépenses publiques {func_de}, mesuré par {outcome_name}, a été le plus élevé pour {best} et le plus faible pour {worst}.",
     "label.per_capita_expenditure_on": "Dépenses par habitant {func_prep}",
     # Lowercase form: includes the article "les" since its only consumer

@@ -41,7 +41,9 @@ def update_year_slider(data, country, func, lang="en"):
         return {"display": "block"}, {}, 0, 0, 0, {}
 
     expenditure_years = list(data.year.astype("int").unique())
-    data = data[data["outcome_index"].notna()]
+    # A year has an outcome only when it was measured that year, not paired
+    # from an earlier one.
+    data = data[_outcome_years(data) == data["year"]]
     outcome_years = list(data.year.astype("int").unique())
     return get_slider_config(expenditure_years, outcome_years, lang=lang)
 
@@ -83,19 +85,40 @@ def _subset_data(df, year, country, func):
     return data.loc[(data.func == func) & (data.year == year)]
 
 
-def _outcome_display_year(country, func, selected_year):
-    """Latest year <= selected_year with subnational outcome data for this
-    country/func, or None. Shared by both across-space maps so the outcome map
-    picks its (possibly carried-forward) render year and the spending map can
-    tell when its selected year differs from it — labelling both only then."""
+def _outcome_years(data):
+    """The year each row's outcome was measured, NaN where it has none.
+
+    The table pairs each spending year with the latest outcome at or before
+    it and says which in ``outcome_year``; without that column an outcome is
+    only ever the spending year's own.
+    """
+    measured = data["outcome_year"].fillna(data["year"]) if "outcome_year" in data else data["year"]
+    return measured.where(data["outcome_index"].notna())
+
+
+def _years_text(years):
+    return ", ".join(str(int(y)) for y in sorted(set(years)))
+
+
+def _outcome_display(country, func, selected_year):
+    """(rows_year, outcome_years) for the across-space outcome charts, or None.
+
+    ``rows_year`` is the latest spending year <= selected_year whose regions
+    carry an outcome, and ``outcome_years`` the years those outcomes were
+    measured. Both maps label their year when the outcome years differ from
+    the selected year.
+    """
     data = server_store.lookup("geo1_func_expenditure")
     if data is None:
         return None
     data = filter_country_sort_year(data, country)
     data = data[(data.func == func) & (data.adm1_name != "Central Scope")]
-    data = data.dropna(subset=["outcome_index"])
-    years = [y for y in sorted(data.year.unique()) if y <= selected_year]
-    return years[-1] if years else None
+    data = data.assign(measured=_outcome_years(data)).dropna(subset=["measured"])
+    data = data[data.year <= selected_year]
+    if data.empty:
+        return None
+    rows_year = data.year.max()
+    return rows_year, sorted(set(data.loc[data.year == rows_year, "measured"].astype(int)))
 
 
 # geo0 says where spending goes: "Regional" is allocated to a region,
@@ -376,9 +399,9 @@ def update_func_expenditure_map(
     # Spending always shows the selected year, so its year note is only useful when
     # the outcome map is showing a different (carried-forward) year — then both maps
     # label their year. The source note always shows.
-    outcome_year = _outcome_display_year(country, func, year)
+    display = _outcome_display(country, func, year)
     notes = []
-    if outcome_year is not None and outcome_year != year:
+    if display is not None and display[1] != [year]:
         notes.append(t("annotation.displaying_data_from", lang, year=year))
     notes.append(t("source.boost_database", lang))
 
@@ -448,10 +471,11 @@ def update_hd_index_map(
     all_data = filter_country_sort_year(all_data, country)
     all_data = all_data[(all_data.func == func) & (all_data.adm1_name != 'Central Scope')]
 
-    display_year = _outcome_display_year(country, func, year)
-    if display_year is None:
+    display = _outcome_display(country, func, year)
+    if display is None:
         return empty_plot(t("error.no_outcome_data", lang))
-    df = all_data[all_data.year == display_year].copy()
+    rows_year, outcome_years = display
+    df = all_data[all_data.year == rows_year].copy()
 
     if df.empty:
         return empty_plot(t("error.no_data_year", lang))
@@ -529,8 +553,8 @@ def update_hd_index_map(
     # The carried-forward data-year note shows only when the outcome displayed is
     # from an earlier year than the one selected; the source note always shows.
     notes = []
-    if display_year != year:
-        notes.append(t("annotation.displaying_data_from", lang, year=display_year))
+    if outcome_years != [year]:
+        notes.append(t("annotation.displaying_data_from", lang, year=_years_text(outcome_years)))
     notes.append(t("source.undp_gdl", lang))
 
     fig.update_layout(
@@ -647,11 +671,12 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
         arrowcolor="rgba(0, 0, 0, 0)",
         text=f"<b>{per_capita_label}</b><br> <b>{base_year}</b>",
     )
+    outcome_years = _years_text(_outcome_years(data).dropna())
     fig.add_annotation(
         x=0.9,
         y=1,
         arrowcolor="rgba(0, 0, 0, 0)",
-        text=f"<b>{outcome_name}</b> <br> <b>{base_year}</b>",
+        text=f"<b>{outcome_name}</b> <br> <b>{outcome_years}</b>",
     )
 
     rank_keys = {0: "rank.1st", 10: "rank.10th", 20: "rank.20th", 30: "rank.30th", 40: "rank.40th"}
@@ -666,7 +691,8 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
                 showarrow=False,
             )
 
-    narrative = _func_subnat_rank_narrative(base_year, func, data, country, lang=lang)
+    narrative = _func_subnat_rank_narrative(base_year, func, data, country, lang=lang,
+                                            outcome_years=outcome_years)
     return apply_locale(fig, lang), narrative
 
 
@@ -676,7 +702,7 @@ def _region_phrase(lang, country, region):
     return _LANGUAGES[lang].get(f"region.{country}.{region}", region)
 
 
-def _func_subnat_rank_narrative(year, func, data, country, lang="en"):
+def _func_subnat_rank_narrative(year, func, data, country, lang="en", outcome_years=None):
     func_lower = t(f"sector.{func.lower()}", lang)
     func_meta = _LANGUAGES[lang].get(f"sector.{func.lower()}")
 
@@ -704,7 +730,10 @@ def _func_subnat_rank_narrative(year, func, data, country, lang="en"):
         lang=lang,
     )
 
-    narrative = t("narrative.subnat_rank_year", lang, year=year, pcc=PCC)
+    if outcome_years is None or outcome_years == str(year):
+        narrative = t("narrative.subnat_rank_year", lang, year=year, pcc=PCC)
+    else:
+        narrative = t("narrative.subnat_rank_years", lang, year=year, outcome_year=outcome_years, pcc=PCC)
     data["ROI"] = data.outcome_index / data.per_capita_expenditure
     best_ROI = data[data["ROI"] == data.ROI.max()].adm1_name.values[0]
     worst_ROI = data[data["ROI"] == data.ROI.min()].adm1_name.values[0]

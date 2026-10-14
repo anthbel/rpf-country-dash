@@ -2,7 +2,9 @@
 
 They read boost.expenditure_and_outcome_by_country_geo1_func_year: one row per
 region, spending year and sector, with ``outcome_index`` — school attendance
-for education, Global Data Lab's health index for health.
+for education, Global Data Lab's health index for health. Years count back
+from END_YEAR (E): with E = 2025, education spending 2021-2025 is paired with
+2020 attendance.
 """
 
 import copy
@@ -11,6 +13,7 @@ from unittest.mock import patch
 
 import pandas as pd
 
+from constants import END_YEAR as E
 from translations import t
 
 with patch("dash.register_page"):
@@ -67,7 +70,7 @@ def _store(geo):
 
 def _health_exact_year():
     """The table before outcome_year: an outcome only where GDL has that year."""
-    geo = _rows("Health", [2021, 2022, 2023, 2024], lambda y: (0.62, y) if y <= 2023 else None)
+    geo = _rows("Health", range(E - 3, E + 1), lambda y: (0.62, y) if y <= E - 1 else None)
     return geo.drop(columns="outcome_year")
 
 
@@ -77,14 +80,14 @@ class HealthIndexNameTest(unittest.TestCase):
     def test_outcome_map_names_the_health_index(self):
         get, lookup = _store(_health_exact_year())
         with get, lookup:
-            fig = space.update_hd_index_map(["d"], ["d"], "Togo", 2023, ["d"], "Health", "light", lang="fr")
+            fig = space.update_hd_index_map(["d"], ["d"], "Togo", E - 1, ["d"], "Health", "light", lang="fr")
         self.assertEqual(fig.layout.title.text, "Indice de santé (espérance de vie) au niveau infranational")
         self.assertIn("Indice de santé (espérance de vie)", fig.data[0].hovertemplate)
 
     def test_sankey_names_the_health_index(self):
         get, lookup = _store(_health_exact_year())
         with get, lookup:
-            fig, narrative = space.render_func_subnat_rank(["d"], "Togo", 2023, "Health", "XOF", lang="fr")
+            fig, narrative = space.render_func_subnat_rank(["d"], "Togo", E - 1, "Health", "XOF", lang="fr")
         headers = [a.text for a in fig.layout.annotations]
         self.assertTrue(any("Indice de santé (espérance de vie)" in h for h in headers), headers)
         self.assertNotIn("CSU", " ".join(headers))
@@ -97,6 +100,95 @@ class HealthIndexNameTest(unittest.TestCase):
                 self.assertIn(phrase, text)
                 self.assertNotIn("CSU", text)
                 self.assertNotIn("UHC", text)
+
+
+
+def _education_paired():
+    """The table with outcome_year: every spending year paired with the
+    attendance of the year before the first one."""
+    return _rows("Education", range(E - 4, E + 1), lambda y: (0.80, E - 5))
+
+
+def _health_paired():
+    """Health index up to E - 2; the last two spending years paired with it."""
+    return _rows("Health", range(E - 4, E + 1), lambda y: (0.62, min(y, E - 2)))
+
+
+def _notes(fig):
+    return [a.text for a in fig.layout.annotations]
+
+
+class OutcomeYearTest(unittest.TestCase):
+    """An outcome paired with a later spending year is shown with its own year."""
+
+    def _maps(self, geo, func, year, lang="fr"):
+        get, lookup = _store(geo)
+        with get, lookup:
+            outcome = space.update_hd_index_map(["d"], ["d"], "Togo", year, ["d"], func, "light", lang=lang)
+            spending = space.update_func_expenditure_map(
+                ["d"], ["d"], "Togo", year, "per_capita_expenditure", ["d"], func, "light", lang=lang)
+            sankey, narrative = space.render_func_subnat_rank(["d"], "Togo", year, func, "XOF", lang=lang)
+        return outcome, spending, sankey, narrative
+
+    def test_education_last_year_shows_the_attendance_with_its_own_year(self):
+        # With E = 2025: selected 2025, attendance from 2020, the note names 2020.
+        outcome, spending, sankey, narrative = self._maps(_education_paired(), "Education", E)
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E - 5), _notes(outcome))
+        self.assertEqual(len(outcome.data[0].locations), 5)
+        # The spending map labels its own year, since the two maps differ.
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E), _notes(spending))
+        headers = _notes(sankey)
+        self.assertIn(str(E - 5), headers[1])
+        self.assertIn(str(E), headers[0])
+        self.assertIn(str(E), narrative)
+        self.assertIn(str(E - 5), narrative)
+
+    def test_health_shows_the_last_measured_index_with_its_year(self):
+        outcome, spending, sankey, _ = self._maps(_health_paired(), "Health", E - 1)
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E - 2), _notes(outcome))
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E - 1), _notes(spending))
+        self.assertIn(str(E - 2), _notes(sankey)[1])
+
+    def test_same_year_outcome_needs_no_note(self):
+        outcome, spending, sankey, narrative = self._maps(_health_paired(), "Health", E - 3)
+        notes = _notes(outcome) + _notes(spending)
+        self.assertFalse([n for n in notes if n.startswith("Affichage")], notes)
+        self.assertIn(str(E - 3), _notes(sankey)[1])
+        self.assertTrue(narrative.startswith(f"En {E - 3}, "), narrative)
+
+    def test_without_outcome_year_the_latest_outcome_year_is_carried(self):
+        outcome, spending, sankey, _ = self._maps(_health_exact_year(), "Health", E)
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E - 1), _notes(outcome))
+        self.assertIn(t("annotation.displaying_data_from", "fr", year=E), _notes(spending))
+        # Without the column the ranking pairs only same-year rows.
+        self.assertEqual(sankey.data, ())
+
+    def test_without_outcome_year_a_same_year_outcome_needs_no_note(self):
+        outcome, spending, sankey, _ = self._maps(_health_exact_year(), "Health", E - 1)
+        notes = _notes(outcome) + _notes(spending)
+        self.assertFalse([n for n in notes if n.startswith("Affichage")], notes)
+        self.assertIn(str(E - 1), _notes(sankey)[1])
+
+
+class YearSliderTest(unittest.TestCase):
+    """A year counts as complete only when its outcome was measured that year."""
+
+    def _slider(self, geo, func):
+        get, lookup = _store(geo)
+        with get, lookup:
+            return space.update_year_slider(["d"], "Togo", func)
+
+    def test_carried_outcomes_do_not_complete_a_year(self):
+        from components.year_slider import YEAR_PARTIAL_STYLE
+        _, marks, value, *_ = self._slider(_education_paired(), "Education")
+        self.assertEqual(value, E)
+        self.assertTrue(all(mark["style"] == YEAR_PARTIAL_STYLE for mark in marks.values()))
+
+    def test_health_defaults_to_its_last_measured_year(self):
+        _, _, value, *_ = self._slider(_health_paired(), "Health")
+        self.assertEqual(value, E - 2)
+        _, _, value, *_ = self._slider(_health_exact_year(), "Health")
+        self.assertEqual(value, E - 1)
 
 
 if __name__ == "__main__":

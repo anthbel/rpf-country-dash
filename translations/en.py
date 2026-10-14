@@ -421,6 +421,7 @@ TRANSLATIONS = {
 
     # --- Subnational rank narrative ---
     "narrative.subnat_rank_year": "In {year}, {pcc}",
+    "narrative.subnat_rank_years": "Comparing {year} spending with {outcome_year} outcomes, {pcc}",
     "narrative.subnat_rank_roi": " Among the subnational regions, in terms of return on public spending {func_prep} measured by {outcome_name}, {best} had the highest return on investment (ROI) while {worst} had the lowest.",
     "label.per_capita_expenditure_on": "Per Capita Expenditure {func_prep}",
     "label.per_capita_expenditure_lower_on": "per capita expenditure {func_prep}",

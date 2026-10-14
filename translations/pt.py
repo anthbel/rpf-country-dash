@@ -375,6 +375,7 @@ TRANSLATIONS = {
     "narrative.health_subnational_context": "Disparidades na despesa pública em saúde entre regiões podem afetar a cobertura universal de saúde (UHC), criando lacunas no acesso a serviços e na proteção financeira. Como a atenção primária é central para a UHC, regiões com menor despesa em saúde per capita podem ter dificuldade para oferecer serviços essenciais.",
     "narrative.health_subnational_motivation": "Para examinar isso em {country}, analisamos a despesa pública per capita em saúde em {year} como medida de alocação de recursos financeiros no nível subnacional e usamos o índice de saúde do Global Data Lab, baseado na expectativa de vida ao nascer, como indicador dos resultados de saúde.",
     "narrative.subnat_rank_year": "Em {year}, {pcc}",
+    "narrative.subnat_rank_years": "Comparando a despesa de {year} com os resultados de {outcome_year}, {pcc}",
     "narrative.subnat_rank_roi": " Entre as regiões subnacionais, em termos de retorno sobre a despesa pública {func_prep} medido por {outcome_name}, {best} teve o maior retorno sobre investimento (ROI), enquanto {worst} teve o menor.",
     "label.per_capita_expenditure_on": "Despesa per capita {func_prep}",
     "label.per_capita_expenditure_lower_on": "a despesa per capita {func_prep}",
