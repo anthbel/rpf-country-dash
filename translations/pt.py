@@ -243,6 +243,9 @@ TRANSLATIONS = {
 
     # --- Narrative templates: overview, spending, public/private, outcomes ---
     "narrative.after_inflation": "Depois de considerar a inflação, {trend_narrative} ",
+    # Close a one-segment trend sentence when the series turns within the period
+    "narrative.turning_point_peak": ", após atingir um pico de {value} em {year}.",
+    "narrative.turning_point_low": ", após um mínimo de {value} em {year}.",
     "narrative.decentral_mean": "Em média, {mean:.1f}% da despesa pública total é executada por governos locais/regionais. ",
     "narrative.decentral_latest": "Em {year}, o ano mais recente com dados disponíveis, a descentralização da despesa é de {pct:.1f}%. ",
     "narrative.no_regional_data": "O BOOST não tem dados de despesa local/regional para {country}. ",

@@ -317,6 +317,9 @@ TRANSLATIONS = {
 
     # --- Narrative templates: Overview ---
     "narrative.after_inflation": "Après prise en compte de l'inflation, {trend_narrative} ",
+    # Close a one-segment trend sentence when the series turns within the period
+    "narrative.turning_point_peak": ", avec un point haut de {value} en {year}.",
+    "narrative.turning_point_low": ", avec un point bas de {value} en {year}.",
     "narrative.decentral_mean": "En moyenne, {mean:.1f} % des dépenses publiques totales sont exécutées par les gouvernements locaux/régionaux. ",
     "narrative.decentral_latest": "En {year}, dernière année pour laquelle des données sont disponibles, la décentralisation des dépenses est de {pct:.1f} %. ",
     "narrative.no_regional_data": "BOOST ne dispose pas de données sur les dépenses locales/régionales pour {country}. ",
