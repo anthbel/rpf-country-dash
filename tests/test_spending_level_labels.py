@@ -55,6 +55,13 @@ class TimeChartLevelsTest(unittest.TestCase):
                 with self.subTest(lang=lang, chart=chart):
                     self.assertEqual([bar.name for bar in _bars(fig)], names)
 
+    def test_top_margin_holds_the_title_above_a_two_row_legend(self):
+        # On a half-width chart « Collectivités territoriales », « Administration
+        # centrale » and « Ajusté à l'inflation » take two legend rows.
+        for chart, fig in self._figures("fr").items():
+            with self.subTest(chart=chart):
+                self.assertGreaterEqual(fig.layout.margin.t, 140)
+
     def test_bar_hovers_name_the_level_and_are_not_called_real(self):
         for chart, fig in self._figures("fr").items():
             with self.subTest(chart=chart):

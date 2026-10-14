@@ -508,6 +508,8 @@ def total_edu_figure(df, currency_code, lang="en"):
         title=t("chart.edu_spending_over_time", lang),
         plot_bgcolor="white",
         legend=dict(orientation="h", yanchor="bottom", y=1),
+        # Room for the title above a legend that wraps to two rows.
+        margin=dict(t=140),
     )
     apply_amount_axis(fig, "yaxis", lang)
 

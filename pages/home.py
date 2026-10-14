@@ -579,6 +579,8 @@ def total_figure(df, currency_name, currency_code, lang="en"):
         plot_bgcolor="white",
         legend=dict(orientation="h", yanchor="bottom", y=1.03),
         hovermode="x unified",
+        # Room for the title above a legend that wraps to two rows.
+        margin=dict(t=140),
     )
     apply_amount_axis(fig, "yaxis", lang)
 
