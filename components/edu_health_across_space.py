@@ -97,6 +97,17 @@ def _outcome_display_year(country, func, selected_year):
     years = [y for y in sorted(data.year.unique()) if y <= selected_year]
     return years[-1] if years else None
 
+
+# geo0 says where spending goes: "Regional" is allocated to a region,
+# "Central" is not. Other values pass through untranslated.
+_GEO0_KEYS = {"Central": "trace.not_geo_allocated", "Regional": "trace.geo_allocated"}
+
+
+def _geo0_label(geo0, lang):
+    key = _GEO0_KEYS.get(geo0)
+    return t(key, lang) if key else geo0
+
+
 def _central_vs_regional_fig(data, func, currency_code, lang="en"):
     func_lower = t(f"sector.{func.lower()}", lang)
     func_meta = t(f"sector.{func.lower()}", lang, meta=True)
@@ -111,13 +122,7 @@ def _central_vs_regional_fig(data, func, currency_code, lang="en"):
         return empty_plot(t("error.no_data_period", lang), fig_title)
 
     add_currency_column(central_vs_regional, 'real_expenditure', currency_code, lang=lang)
-    # Translate the slice labels: "Central" → "Central" (same in FR),
-    # "Regional" → "Régional". Unknown values pass through unchanged.
-    geo0_key_map = {"Central": "trace.central", "Regional": "trace.regional"}
-    pie_labels = [
-        t(geo0_key_map[g], lang) if g in geo0_key_map else g
-        for g in central_vs_regional["geo0"]
-    ]
+    pie_labels = [_geo0_label(g, lang) for g in central_vs_regional["geo0"]]
     fig = go.Figure(
         data=[
             go.Pie(
@@ -126,8 +131,8 @@ def _central_vs_regional_fig(data, func, currency_code, lang="en"):
                 hole=0.5,
                 marker=dict(colors=[CENTRAL_COLOR, REGIONAL_COLOR]),
                 customdata=np.stack(central_vs_regional["real_expenditure_formatted"]),
-                hovertemplate="<b>" + t("hover.real_expenditure", lang) + "</b>: %{customdata}<br>"
-                + "<extra></extra>",
+                hovertemplate="<b>%{label}</b><br>" + t("hover.real_expenditure", lang)
+                + ": %{customdata}<extra></extra>",
             )
         ]
     )
@@ -182,10 +187,6 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
         data.groupby(["func_sub", "geo0"], sort=False).sum(numeric_only=True).reset_index()
     )
 
-    # Maps raw geo0 data values ("Central" / "Regional") to their
-    # translation keys. Other values fall through untranslated.
-    geo0_key_map = {"Central": "trace.central", "Regional": "trace.regional"}
-
     for _, row in data_grouped.iterrows():
         parent = row["func_sub"]
         percent_of_parent = (row["expenditure"] / parent_totals[parent]) * 100 \
@@ -194,8 +195,7 @@ def _sub_func_fig(data, func, currency_code, lang="en"):
         ids.append(f"{row['func_sub']} - {row['geo0']}")
         parents.append(parent)
         values.append(row["expenditure"])
-        geo0_key = geo0_key_map.get(row["geo0"])
-        geo0_label = t(geo0_key, lang) if geo0_key else row["geo0"]
+        geo0_label = _geo0_label(row["geo0"], lang)
         labels.append(f"{geo0_label}<br>{format_currency(row['expenditure'], currency_code, lang=lang)} ({percent_of_parent:.0f}%)")
         hover_texts.append(f"{t('hover.real_expenditure', lang)}: {format_currency(row['real_expenditure'], currency_code, lang=lang)}")
         base_color = parent_colors[parent]

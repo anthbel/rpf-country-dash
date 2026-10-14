@@ -72,8 +72,12 @@ TRANSLATIONS = {
 
     # --- Trace / legend names ---
     "trace.inflation_adjusted": "Inflation Adjusted",
-    "trace.central": "Central",
-    "trace.regional": "Regional",
+    # Who executes the spending (time charts)
+    "trace.central_government": "Central government",
+    "trace.subnational_governments": "Subnational governments",
+    # Where the spending goes (geographic split)
+    "trace.geo_allocated": "Geographically allocated",
+    "trace.not_geo_allocated": "Not geographically allocated",
     "trace.public_expenditure": "Public Expenditure",
     "trace.private_expenditure": "Private Expenditure",
     "trace.poverty_rate": "Poverty Rate",
@@ -90,15 +94,11 @@ TRANSLATIONS = {
 
     # --- Hover templates ---
     "hover.real_expenditure": "Real Expenditure",
-    "hover.central": "Central",
-    "hover.regional": "Regional",
+    "hover.central_government_spending": "Central government spending",
+    "hover.subnational_government_spending": "Subnational government spending",
     "hover.inflation_adjusted_expenditure": "Inflation Adjusted Expenditure",
-    "hover.central_expenditure": "Central Expenditure",
-    "hover.regional_expenditure": "Regional Expenditure",
     "hover.inflation_adjusted_per_capita": "Inflation Adjusted Per Capita Public Spending",
     "hover.per_capita_spending": "Per Capita Public Spending",
-    "hover.real_central_expenditure": "Real Central Expenditure",
-    "hover.real_decentralized_expenditure": "Real Decentralized Expenditure",
     "hover.real_public_expenditure": "Real Public Expenditure ",
     "hover.real_private_expenditure": "Real Private Expenditure",
     "hover.func_category": "Functional Category",

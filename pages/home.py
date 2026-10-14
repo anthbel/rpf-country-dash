@@ -553,22 +553,22 @@ def total_figure(df, currency_name, currency_code, lang="en"):
     )
     fig.add_trace(
         go.Bar(
-            name=t("trace.central", lang),
+            name=t("trace.central_government", lang),
             x=df.year,
             y=df.expenditure - df.decentralized_expenditure,
             marker_color=CENTRAL_COLOR,
             customdata=np.column_stack([df['central_expenditure_formatted']]),
-            hovertemplate=t("hover.central_expenditure", lang) + ": %{customdata[0]}<extra></extra>",
+            hovertemplate=t("hover.central_government_spending", lang) + ": %{customdata[0]}<extra></extra>",
         )
     )
     fig.add_trace(
         go.Bar(
-            name=t("trace.regional", lang),
+            name=t("trace.subnational_governments", lang),
             x=df.year,
             y=df.decentralized_expenditure,
             marker_color=REGIONAL_COLOR,
             customdata=np.column_stack([df['decentralized_expenditure_formatted']]),
-            hovertemplate=t("hover.regional_expenditure", lang) + ": %{customdata[0]}<extra></extra>",
+            hovertemplate=t("hover.subnational_government_spending", lang) + ": %{customdata[0]}<extra></extra>",
         )
     )
 

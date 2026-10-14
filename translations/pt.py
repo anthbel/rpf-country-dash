@@ -76,8 +76,12 @@ TRANSLATIONS = {
 
     # --- Trace / legend names ---
     "trace.inflation_adjusted": "Ajustado pela inflação",
-    "trace.central": "Central",
-    "trace.regional": "Regional",
+    # Who executes the spending (time charts)
+    "trace.central_government": "Governo central",
+    "trace.subnational_governments": "Governos subnacionais",
+    # Where the spending goes (geographic split)
+    "trace.geo_allocated": "Alocada geograficamente",
+    "trace.not_geo_allocated": "Não alocada geograficamente",
     "trace.public_expenditure": "Despesa pública",
     "trace.private_expenditure": "Despesa privada",
     "trace.poverty_rate": "Taxa de pobreza",
@@ -94,15 +98,11 @@ TRANSLATIONS = {
 
     # --- Hover / axis / radio labels ---
     "hover.real_expenditure": "Despesa real",
-    "hover.central": "Central",
-    "hover.regional": "Regional",
+    "hover.central_government_spending": "Despesa do governo central",
+    "hover.subnational_government_spending": "Despesa dos governos subnacionais",
     "hover.inflation_adjusted_expenditure": "Despesa ajustada pela inflação",
-    "hover.central_expenditure": "Despesa central",
-    "hover.regional_expenditure": "Despesa regional",
     "hover.inflation_adjusted_per_capita": "Despesa pública per capita ajustada pela inflação",
     "hover.per_capita_spending": "Despesa pública per capita",
-    "hover.real_central_expenditure": "Despesa central real",
-    "hover.real_decentralized_expenditure": "Despesa descentralizada real",
     "hover.real_public_expenditure": "Despesa pública real",
     "hover.real_private_expenditure": "Despesa privada real",
     "hover.func_category": "Categoria funcional",

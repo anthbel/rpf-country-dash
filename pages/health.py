@@ -475,22 +475,22 @@ def total_health_figure(df, currency_code, lang="en"):
     )
     fig.add_trace(
         go.Bar(
-            name=t("trace.central", lang),
+            name=t("trace.central_government", lang),
             customdata=df['central_expenditure_formatted'],
             x=df.year,
             y=df.central_expenditure,
             marker_color=CENTRAL_COLOR,
-            hovertemplate="<b>" + t("hover.real_central_expenditure", lang) + "</b>: %{customdata}<extra></extra>",
+            hovertemplate="<b>" + t("hover.central_government_spending", lang) + "</b>: %{customdata}<extra></extra>",
         ),
     )
     fig.add_trace(
         go.Bar(
-            name=t("trace.regional", lang),
+            name=t("trace.subnational_governments", lang),
             customdata=df['decentralized_expenditure_formatted'],
             x=df.year,
             y=df.decentralized_expenditure,
             marker_color=REGIONAL_COLOR,
-            hovertemplate="<b>" + t("hover.real_decentralized_expenditure", lang) + "</b>: %{customdata}<extra></extra>",
+            hovertemplate="<b>" + t("hover.subnational_government_spending", lang) + "</b>: %{customdata}<extra></extra>",
         ),
     )
 

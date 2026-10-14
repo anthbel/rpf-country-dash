@@ -75,8 +75,12 @@ TRANSLATIONS = {
 
     # --- Trace / legend names ---
     "trace.inflation_adjusted": "Ajusté à l'inflation",
-    "trace.central": "Central",
-    "trace.regional": "Régional",
+    # Who executes the spending (time charts)
+    "trace.central_government": "Administration centrale",
+    "trace.subnational_governments": "Collectivités territoriales",
+    # Where the spending goes (geographic split)
+    "trace.geo_allocated": "Allouées géographiquement",
+    "trace.not_geo_allocated": "Non allouées géographiquement",
     "trace.public_expenditure": "Dépenses publiques",
     "trace.private_expenditure": "Dépenses privées",
     "trace.poverty_rate": "Taux de pauvreté",
@@ -93,15 +97,11 @@ TRANSLATIONS = {
 
     # --- Hover templates ---
     "hover.real_expenditure": "Dépenses réelles",
-    "hover.central": "Central",
-    "hover.regional": "Régional",
+    "hover.central_government_spending": "Dépenses de l'administration centrale",
+    "hover.subnational_government_spending": "Dépenses des collectivités territoriales",
     "hover.inflation_adjusted_expenditure": "Dépenses ajustées à l'inflation",
-    "hover.central_expenditure": "Dépenses centrales",
-    "hover.regional_expenditure": "Dépenses régionales",
     "hover.inflation_adjusted_per_capita": "Dépenses publiques par habitant ajustées à l'inflation",
     "hover.per_capita_spending": "Dépenses publiques par habitant",
-    "hover.real_central_expenditure": "Dépenses centrales réelles",
-    "hover.real_decentralized_expenditure": "Dépenses décentralisées réelles",
     "hover.real_public_expenditure": "Dépenses publiques réelles ",
     "hover.real_private_expenditure": "Dépenses privées réelles",
     "hover.func_category": "Catégorie fonctionnelle",
