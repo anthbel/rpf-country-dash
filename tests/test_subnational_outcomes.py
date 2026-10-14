@@ -170,6 +170,27 @@ class OutcomeYearTest(unittest.TestCase):
         self.assertIn(str(E - 1), _notes(sankey)[1])
 
 
+class SankeyLayoutTest(unittest.TestCase):
+    def _sankey(self):
+        get, lookup = _store(_health_exact_year())
+        with get, lookup:
+            fig, _ = space.render_func_subnat_rank(["d"], "Togo", E - 1, "Health", "XOF", lang="fr")
+        return fig
+
+    def test_rank_label_ends_before_the_first_node(self):
+        fig = self._sankey()
+        rank = next(a for a in fig.layout.annotations if a.text == "<b>1er</b>")
+        node_x = fig.data[0].node.x[0]
+        self.assertEqual((rank.xref, rank.xanchor), ("paper", "right"))
+        self.assertLess(rank.x, node_x)
+
+    def test_region_labels_are_readable(self):
+        fig = self._sankey()
+        self.assertGreaterEqual(fig.data[0].textfont.size, 13)
+        # Both columns name the regions as they are.
+        self.assertEqual(sorted(fig.data[0].node.label[:5]), sorted(fig.data[0].node.label[5:]))
+
+
 class YearSliderTest(unittest.TestCase):
     """A year counts as complete only when its outcome was measured that year."""
 

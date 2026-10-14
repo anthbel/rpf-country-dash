@@ -637,16 +637,17 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
     node_colors_opaque = [add_opacity(color, 0.7) for color in node_colors]
     node_colors += [node_colors[source.index(dest[i])] for i in range(n)]
 
+    node_x = (0.1, 0.9)
     fig = go.Figure()
     fig.add_trace(
         go.Sankey(
             node=dict(
                 thickness=20,
                 line=dict(color="black", width=0.2),
-                label=list(source) + [name + "-" for name in list(dest)],
+                label=list(source) + list(dest),
                 y=[(i + 1) / (n + 1) for i in range(n)]
                 + [(i + 1) / (n + 1) for i in range(n)],
-                x=[0.1 for i in range(n)] + [0.9 for i in range(n)],
+                x=[node_x[0] for i in range(n)] + [node_x[1] for i in range(n)],
                 color=node_colors,
                 customdata=node_custom_data,
                 hovertemplate="%{customdata[1]}:  %{customdata[0]}<extra></extra>",
@@ -660,6 +661,7 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
                 + f"<b>{outcome_name}:</b> " + "%{target.customdata[0]}<br>"
                 + "<extra></extra>",
             ),
+            textfont=dict(size=13),
         )
     )
 
@@ -683,9 +685,13 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
     for i in range(0, n + 1, 10):
         rank_key = rank_keys.get(i)
         if rank_key:
+            # Right-aligned just left of the first column of nodes.
             fig.add_annotation(
+                xref="paper",
+                yref="paper",
                 y=1 - ((i + 1) / (n + 1)),
-                x=0.075,
+                x=node_x[0] - 0.005,
+                xanchor="right",
                 yshift=10,
                 text=f"<b>{t(rank_key, lang)}</b>",
                 showarrow=False,
