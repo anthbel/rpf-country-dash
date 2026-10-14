@@ -340,6 +340,16 @@ class QueryService:
         """
         return self.fetch_data(query)
 
+    def get_togo_execution_data(self, persistent=True):
+        """Togo's budget execution by line: votes and execution stages in XOF.
+        ``persistent=False`` reads the database, bypassing the query cache."""
+        query = f"""
+            SELECT *
+            FROM prd_mega.{BOOST_SCHEMA}.tgo_execution
+        """
+        df = self.execute_query(query, persistent=persistent)
+        return self._apply_country_whitelist_filter(df)
+
     def get_government_revenue_expenditure_data(self):
         source_filter = ",\n                ".join(
             f"'{src}'" for src in IMF_GOVERNMENT_REVENUE_EXPENDITURE_SOURCES
