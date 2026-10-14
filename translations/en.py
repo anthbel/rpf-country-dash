@@ -661,6 +661,8 @@ TRANSLATIONS = {
     "execution.heading.green": "Green budget",
     "execution.heading.social": "Social spending",
     "execution.download": "Download the tables (Excel)",
+    "execution.download_sigfip": "Execution report (SIGFIP tables)",
+    "execution.download_ca": "Administrative account",
     "execution.unspecified": "Not specified",
     "execution.measure.dotation_ae": "Commitment authorisations",
     "execution.measure.dotation_initiale": "Initial budget",

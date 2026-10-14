@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 import server_store
 from components import togo_execution as te
 from translations import t
+from tests import execution_detail_fixture as lines
 from tests.execution_fixture import PRIOR_YEAR, YEAR, execution_frame
 
 with patch("dash.register_page"):
@@ -81,6 +82,57 @@ class PageTest(unittest.TestCase):
         self.assertEqual(data["filename"], f"execution_budget_togo_{YEAR}.xlsx")
         wb = load_workbook(io.BytesIO(base64.b64decode(data["content"])))
         self.assertEqual(wb.sheetnames[0], "Natures")
+
+
+class WorkbookDownloadTest(unittest.TestCase):
+    """The SIGFIP tables and the compte administratif, built from the budget lines."""
+
+    def setUp(self):
+        server_store.clear()
+        self.addCleanup(server_store.clear)
+        server_store.set("togo_execution", te.normalise_execution(lines.fact_frame()))
+
+    def _detail(self, year, admin2_code=None, persistent=True):
+        df = lines.detail_frame()
+        df = df[df["year"] == int(year)]
+        return df if admin2_code is None else df[df["admin2_code"] == admin2_code]
+
+    def test_buttons_wait_for_a_year_and_a_ministry(self):
+        self.assertEqual(page.update_workbook_buttons(None, None), (True, True))
+        self.assertEqual(page.update_workbook_buttons(lines.YEAR, None), (False, True))
+        self.assertEqual(page.update_workbook_buttons(lines.YEAR, "210"), (False, False))
+
+    def test_sigfip_download(self):
+        with patch("queries.QueryService.get_togo_execution_detail", side_effect=self._detail) as read:
+            data = page.download_sigfip(1, lines.YEAR, "Togo")
+        read.assert_called_once_with(lines.YEAR, None)
+        self.assertEqual(data["filename"], f"tableaux_sigfip_togo_{lines.YEAR}.xlsx")
+        wb = load_workbook(io.BytesIO(base64.b64decode(data["content"])))
+        self.assertEqual(wb.sheetnames[0], "(GN & MIN)")
+
+    def test_ca_download_for_the_selected_ministry(self):
+        with patch("queries.QueryService.get_togo_execution_detail", side_effect=self._detail) as read:
+            data = page.download_ca(1, lines.YEAR, "210", "Togo")
+        read.assert_called_once_with(lines.YEAR, "210")
+        self.assertEqual(data["filename"], f"compte_administratif_210_{lines.YEAR}.xlsx")
+        wb = load_workbook(io.BytesIO(base64.b64decode(data["content"])))
+        self.assertEqual(wb["DEP-execution -DETAILS"]["A1"].value,
+                         "Section 210 : MINISTERE DE L'ECONOMIE ET DES FINANCES (MEF)")
+
+    def test_downloads_need_execution_lines(self):
+        with patch("queries.QueryService.get_togo_execution_detail", side_effect=self._detail):
+            with self.assertRaises(PreventUpdate):
+                page.download_ca(1, lines.YEAR, None, "Togo")
+            with self.assertRaises(PreventUpdate):
+                page.download_ca(1, lines.YEAR, "210", "Kenya")
+            with self.assertRaises(PreventUpdate):
+                page.download_sigfip(1, None, "Togo")
+
+    def test_missing_detail_table_gives_no_file(self):
+        with patch("queries.QueryService.get_togo_execution_detail",
+                   side_effect=RuntimeError('relation "boost.tgo_execution_detail" does not exist')):
+            with self.assertLogs(level="ERROR"), self.assertRaises(PreventUpdate):
+                page.download_sigfip(1, lines.YEAR, "Togo")
 
 
 if __name__ == "__main__":

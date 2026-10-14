@@ -1,6 +1,9 @@
 """« Exécution du budget »: Togo's budget execution by year, ministry,
 programme, economic nature, funding and budget tagging, with the DGBF's
-standard tables as an Excel download."""
+standard tables, its execution report tables (SIGFIP) and a ministry's
+compte administratif as Excel downloads."""
+import logging
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, dcc, html
@@ -8,11 +11,15 @@ from dash.exceptions import PreventUpdate
 
 from components import togo_execution as te
 from components.country_title import country_title, register_country_title
+from components.togo_ca_report import build_ca_report
 from components.togo_execution_report import build_report
+from components.togo_sigfip_report import build_sigfip_report
 from translations import t
 from utils import require_login
 
 dash.register_page(__name__, path="/execution")
+
+logger = logging.getLogger(__name__)
 
 GRAPH_CONFIG = {"displayModeBar": False}
 
@@ -31,6 +38,8 @@ def layout():
             ),
             dcc.Store(id="stored-data-execution"),
             dcc.Download(id="execution-download"),
+            dcc.Download(id="execution-sigfip-download"),
+            dcc.Download(id="execution-ca-download"),
         ]
     )
 
@@ -74,6 +83,11 @@ def render_execution_content(lang):
                            color="primary", disabled=True),
                 xs=12, md="auto", className="align-self-end mt-2 mt-md-0",
             ),
+            dbc.Col(
+                dbc.Button(t("execution.download_sigfip", lang), id="execution-sigfip-button",
+                           color="primary", outline=True, disabled=True),
+                xs=12, md="auto", className="align-self-end mt-2 mt-md-0",
+            ),
         ],
         className="mb-3",
     )
@@ -109,13 +123,20 @@ def render_execution_content(lang):
             *_section(
                 "execution.heading.programmes", lang,
                 dbc.Row(
-                    dbc.Col(
-                        [
-                            html.Label(t("execution.ministry", lang), htmlFor="execution-ministry"),
-                            dcc.Dropdown(id="execution-ministry", clearable=False),
-                        ],
-                        xs=12, md=6,
-                    ),
+                    [
+                        dbc.Col(
+                            [
+                                html.Label(t("execution.ministry", lang), htmlFor="execution-ministry"),
+                                dcc.Dropdown(id="execution-ministry", clearable=False),
+                            ],
+                            xs=12, md=6,
+                        ),
+                        dbc.Col(
+                            dbc.Button(t("execution.download_ca", lang), id="execution-ca-button",
+                                       color="primary", outline=True, disabled=True),
+                            xs=12, md="auto", className="align-self-end mt-2 mt-md-0",
+                        ),
+                    ],
                     className="mb-2",
                 ),
                 _narrative("execution-programmes-narrative", lang),
@@ -272,3 +293,56 @@ def download_report(n_clicks, year, country):
     if not n_clicks or df is None or year is None:
         raise PreventUpdate
     return dcc.send_bytes(build_report(df, year), f"execution_budget_{country.lower()}_{year}.xlsx")
+
+
+@callback(
+    Output("execution-sigfip-button", "disabled"),
+    Output("execution-ca-button", "disabled"),
+    Input("execution-year", "value"),
+    Input("execution-ministry", "value"),
+)
+def update_workbook_buttons(year, ministry):
+    return year is None, year is None or not ministry
+
+
+def _detail(country, year, admin2_code=None):
+    """The year's budget lines, or PreventUpdate when there are none or the table
+    cannot be read."""
+    try:
+        detail = te.load_execution_detail(country, year, admin2_code)
+    except Exception:
+        logger.exception("execution detail for %s %s %s could not be read", country, year, admin2_code)
+        raise PreventUpdate
+    if detail is None:
+        raise PreventUpdate
+    return detail
+
+
+@callback(
+    Output("execution-sigfip-download", "data"),
+    Input("execution-sigfip-button", "n_clicks"),
+    State("execution-year", "value"),
+    State("country-select", "value"),
+    prevent_initial_call=True,
+)
+def download_sigfip(n_clicks, year, country):
+    df = te.load_execution(country)
+    if not n_clicks or df is None or year is None:
+        raise PreventUpdate
+    content = build_sigfip_report(df, _detail(country, year), year)
+    return dcc.send_bytes(content, f"tableaux_sigfip_{country.lower()}_{year}.xlsx")
+
+
+@callback(
+    Output("execution-ca-download", "data"),
+    Input("execution-ca-button", "n_clicks"),
+    State("execution-year", "value"),
+    State("execution-ministry", "value"),
+    State("country-select", "value"),
+    prevent_initial_call=True,
+)
+def download_ca(n_clicks, year, ministry, country):
+    if not n_clicks or year is None or not ministry:
+        raise PreventUpdate
+    content = build_ca_report(_detail(country, year, ministry), year, ministry)
+    return dcc.send_bytes(content, f"compte_administratif_{ministry}_{year}.xlsx")
