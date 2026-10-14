@@ -420,7 +420,7 @@ FUNC_OUTCOME_MAP = {
         lambda value: f"{value:.1f}%",
     ],
     'Health': [
-        'UHC Index',
+        'Health Index',
         lambda value: value,
         lambda value: f"{value:.2f}",
     ],
@@ -428,7 +428,7 @@ FUNC_OUTCOME_MAP = {
 
 FUNC_OUTCOME_KEY_MAP = {
     'Education': 'outcome.school_attendance',
-    'Health': 'outcome.uhc_index',
+    'Health': 'outcome.health_index',
 }
 
 def update_hd_index_map(
@@ -685,7 +685,7 @@ def _func_subnat_rank_narrative(year, func, data, country, lang="en"):
     outcome_name_lower = re.sub(r'\buhc\b', 'UHC', outcome_name.lower(), flags=re.IGNORECASE)
 
     # For the correlation narrative, pass articled display names so the
-    # generated French reads "entre les dépenses... et l'indice CSU..."
+    # generated French reads "entre les dépenses... et l'indice de santé..."
     # rather than the ungrammatical bare-noun concatenation.
     outcome_display = (
         t(f"{outcome_name_key}.narrative", lang)
@@ -710,8 +710,8 @@ def _func_subnat_rank_narrative(year, func, data, country, lang="en"):
     worst_ROI = data[data["ROI"] == data.ROI.min()].adm1_name.values[0]
 
     # Use the .narrative form (with definite article in French) for
-    # mid-sentence interpolation — "mesuré par l'indice CSU" not
-    # "mesuré par indice CSU".
+    # mid-sentence interpolation — "mesuré par l'indice de santé" not
+    # "mesuré par indice de santé".
     outcome_narrative = (
         t(f"{outcome_name_key}.narrative", lang)
         if outcome_name_key else outcome_name_lower

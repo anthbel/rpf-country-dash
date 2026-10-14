@@ -64,7 +64,7 @@ TRANSLATIONS = {
     "chart.func_levels_spending": "Combien l'État a-t-il dépensé aux différents niveaux {func_gen} ?",
     "chart.subnational_func_spending": "Dépenses infranationales {func_gen}",
     # Use a prepositional phrase so the template works for both masculine
-    # outcomes ("Indice CSU") and feminine ones ("Fréquentation scolaire")
+    # outcomes ("Indice de santé") and feminine ones ("Fréquentation scolaire")
     # without requiring gendered adjective agreement ("infranational(e)").
     "chart.subnational_outcome": "{outcome_name} au niveau infranational",
     "chart.budget_func_fluctuation": "Comment les budgets par catégorie fonctionnelle fluctuent-ils au fil du temps ?",
@@ -504,7 +504,7 @@ TRANSLATIONS = {
 
     # --- Health across space ---
     "narrative.health_subnational_context": "Les disparités régionales dans les dépenses publiques de santé peuvent compromettre la couverture sanitaire universelle (CSU, ou UHC en anglais) en créant des écarts dans l'accès aux services et dans la protection financière. Étant donné que les soins de santé primaires sont au cœur de la CSU, les régions avec des dépenses de santé par habitant plus faibles peuvent avoir du mal à fournir des services essentiels, entraînant une couverture plus faible en santé maternelle, lutte contre les maladies infectieuses et gestion des maladies chroniques. L'analyse des disparités infranationales dans les dépenses de santé géographiquement allouées aide à évaluer si les ressources sont alignées sur les objectifs de la CSU et à identifier les régions à risque d'accès insuffisant aux soins de santé.",
-    "narrative.health_subnational_motivation": "Pour examiner cela pour {country}, nous analysons les dépenses publiques de santé par habitant en {year} comme mesure de l'allocation des ressources financières au niveau infranational et utilisons l'indice CSU comme indicateur de la couverture sanitaire universelle.",
+    "narrative.health_subnational_motivation": "Pour examiner cela pour {country}, nous analysons les dépenses publiques de santé par habitant en {year} comme mesure de l'allocation des ressources financières au niveau infranational et utilisons l'indice de santé de Global Data Lab, fondé sur l'espérance de vie à la naissance, comme indicateur des résultats sanitaires.",
 
     # --- Subnational rank narrative ---
     "narrative.subnat_rank_year": "En {year}, {pcc}",
@@ -512,7 +512,7 @@ TRANSLATIONS = {
     "label.per_capita_expenditure_on": "Dépenses par habitant {func_prep}",
     # Lowercase form: includes the article "les" since its only consumer
     # is mid-sentence correlation narratives ("entre les dépenses par
-    # habitant en santé et l'indice CSU"), where the bare form would
+    # habitant en santé et l'indice de santé"), where the bare form would
     # produce ungrammatical French.
     "label.per_capita_expenditure_lower_on": "les dépenses par habitant {func_prep}",
 
@@ -620,15 +620,16 @@ TRANSLATIONS = {
 
     # --- Outcome names ---
     # Bare form — for chart titles, hover labels. Stays without article so
-    # French titles like "Indice CSU au niveau infranational" read as clean labels.
+    # French titles like "Indice de santé (espérance de vie) au niveau infranational"
+    # read as clean labels.
     "outcome.school_attendance": "Fréquentation scolaire des 6-17 ans",
-    "outcome.uhc_index": "Indice CSU",
+    "outcome.health_index": "Indice de santé (espérance de vie)",
     # Narrative form — used mid-sentence after prepositions like "par" or
     # "selon" that need a definite article in French ("mesuré par l'indice
-    # CSU", "selon la fréquentation scolaire"). Falls back to the bare form
+    # de santé", "selon la fréquentation scolaire"). Falls back to the bare form
     # in English since articles aren't needed.
     "outcome.school_attendance.narrative": "la fréquentation scolaire des 6-17 ans",
-    "outcome.uhc_index.narrative": "l'indice CSU",
+    "outcome.health_index.narrative": "l'indice de santé (espérance de vie)",
 
     # --- Sankey rank labels ---
     "rank.1st": "1er",

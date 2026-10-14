@@ -417,7 +417,7 @@ TRANSLATIONS = {
 
     # --- Health across space ---
     "narrative.health_subnational_context": "Disparities in public health spending across regions can impact Universal Health Coverage (UHC) by creating gaps in service access and financial protection. Since primary healthcare is central to UHC, regions with lower per capita health spending may struggle to provide essential services, leading to weaker coverage in maternal health, infectious disease control, and chronic disease management. Analyzing subnational disparities in geographically allocated health spending helps assess whether resources align with UHC goals and identify regions at risk of inadequate healthcare access.",
-    "narrative.health_subnational_motivation": "To examine this for {country}, we analyze per capita public health spending in {year} as a measure of financial resource allocation at the subnational level and use the UHC index as an indicator of Universal Health Coverage.",
+    "narrative.health_subnational_motivation": "To examine this for {country}, we analyze per capita public health spending in {year} as a measure of financial resource allocation at the subnational level and use Global Data Lab's health index, based on life expectancy at birth, as an indicator of health outcomes.",
 
     # --- Subnational rank narrative ---
     "narrative.subnat_rank_year": "In {year}, {pcc}",
@@ -525,11 +525,11 @@ TRANSLATIONS = {
 
     # --- Outcome names ---
     "outcome.school_attendance": "School Attendance for Age 6-17",
-    "outcome.uhc_index": "UHC Index",
+    "outcome.health_index": "Health Index (life expectancy)",
     # English doesn't need a separate articled form; parity with fr.py
     # so callers can always use the .narrative key without a lang check.
     "outcome.school_attendance.narrative": "school attendance for age 6-17",
-    "outcome.uhc_index.narrative": "the UHC Index",
+    "outcome.health_index.narrative": "the health index (life expectancy)",
 
     # --- Sankey rank labels ---
     "rank.1st": "1st",

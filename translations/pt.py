@@ -373,7 +373,7 @@ TRANSLATIONS = {
     "narrative.edu_subnational_context": "Como a educação primária e secundária está mais diretamente ligada à frequência escolar de crianças de 6 a 17 anos, disparidades no financiamento regional podem ter impacto maior no acesso à educação. Entender como esses recursos se traduzem em acesso à educação é essencial para avaliar se a despesa pública apoia oportunidades equitativas para as crianças.",
     "narrative.edu_subnational_motivation": "Para examinar isso em {country}, analisamos a despesa pública per capita em educação em {year} como medida de alocação de recursos financeiros no nível subnacional e usamos a taxa de frequência escolar de crianças de 6 a 17 anos como aproximação do acesso à educação.",
     "narrative.health_subnational_context": "Disparidades na despesa pública em saúde entre regiões podem afetar a cobertura universal de saúde (UHC), criando lacunas no acesso a serviços e na proteção financeira. Como a atenção primária é central para a UHC, regiões com menor despesa em saúde per capita podem ter dificuldade para oferecer serviços essenciais.",
-    "narrative.health_subnational_motivation": "Para examinar isso em {country}, analisamos a despesa pública per capita em saúde em {year} como medida de alocação de recursos financeiros no nível subnacional e usamos o índice UHC como indicador de cobertura universal de saúde.",
+    "narrative.health_subnational_motivation": "Para examinar isso em {country}, analisamos a despesa pública per capita em saúde em {year} como medida de alocação de recursos financeiros no nível subnacional e usamos o índice de saúde do Global Data Lab, baseado na expectativa de vida ao nascer, como indicador dos resultados de saúde.",
     "narrative.subnat_rank_year": "Em {year}, {pcc}",
     "narrative.subnat_rank_roi": " Entre as regiões subnacionais, em termos de retorno sobre a despesa pública {func_prep} medido por {outcome_name}, {best} teve o maior retorno sobre investimento (ROI), enquanto {worst} teve o menor.",
     "label.per_capita_expenditure_on": "Despesa per capita {func_prep}",
@@ -467,9 +467,9 @@ TRANSLATIONS = {
 
     # --- Outcome names / ranks ---
     "outcome.school_attendance": "Frequência escolar de 6 a 17 anos",
-    "outcome.uhc_index": "Índice UHC",
+    "outcome.health_index": "Índice de saúde (expectativa de vida)",
     "outcome.school_attendance.narrative": "a frequência escolar de 6 a 17 anos",
-    "outcome.uhc_index.narrative": "o índice UHC",
+    "outcome.health_index.narrative": "o índice de saúde (expectativa de vida)",
     "rank.1st": "1º",
     "rank.10th": "10º",
     "rank.20th": "20º",
