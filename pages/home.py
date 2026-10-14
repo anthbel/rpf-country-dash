@@ -9,6 +9,8 @@ from plotly.subplots import make_subplots
 import numpy as np
 from utils import (
     add_currency_column,
+    apply_amount_axis,
+    apply_amount_colorbar,
     apply_locale,
     filter_country_sort_year,
     format_year_axis,
@@ -578,6 +580,7 @@ def total_figure(df, currency_name, currency_code, lang="en"):
         legend=dict(orientation="h", yanchor="bottom", y=1.03),
         hovermode="x unified",
     )
+    apply_amount_axis(fig, "yaxis", lang)
 
     return apply_locale(fig, lang)
 
@@ -638,6 +641,7 @@ def per_capita_figure(df, currency_name, currency_code, lang="en"):
         plot_bgcolor="white",
         legend=dict(orientation="h", yanchor="bottom", y=1.03),
     )
+    apply_amount_axis(fig, "yaxis", lang)
 
     return apply_locale(fig, lang)
 
@@ -932,6 +936,7 @@ def regional_spending_choropleth(geojson, disputed_geojson, df, zmin, zmax, lat,
         ),
         legend=dict(orientation="h", x=1.02, y=1, xanchor="left", yanchor="top"),
     )
+    apply_amount_colorbar(fig, lang)
     fig.data[0].hovertemplate = (
         "<b>" + t("hover.region", lang) + ":</b> %{location}<br>"
         "<b>" + t("hover.expenditure_label", lang) + ":</b> %{z}<extra></extra>"
@@ -995,6 +1000,7 @@ def regional_percapita_spending_choropleth(geojson, disputed_geojson, df, zmin, 
             thickness=10,
         ),
     )
+    apply_amount_colorbar(fig, lang)
     fig.data[0].hovertemplate = (
         "<b>" + t("hover.region", lang) + ":</b> %{location}<br>"
         + f"<b>{per_capita_label}:</b> %{{customdata[0]}}<extra></extra>"

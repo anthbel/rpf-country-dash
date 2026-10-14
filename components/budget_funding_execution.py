@@ -8,6 +8,7 @@ from constants import translate_econ
 from components.func_operational_vs_capital_spending import CAPEX, OP_WAGE_BILL
 from viz_theme import QUALITATIVE, lighten_color
 from utils import (
+    apply_amount_axis,
     apply_locale,
     format_year_axis,
     empty_plot,
@@ -224,6 +225,7 @@ def create_funding_source_figure(
         legend=dict(orientation="h", yanchor="bottom", y=1.03),
         hovermode="x unified",
     )
+    apply_amount_axis(fig, "yaxis2" if has_split else "yaxis", lang)
     return apply_locale(fig, lang)
 
 

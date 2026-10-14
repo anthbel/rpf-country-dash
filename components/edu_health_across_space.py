@@ -17,6 +17,7 @@ import server_store
 from utils import (
     add_currency_column,
     add_disputed_overlay,
+    apply_amount_colorbar,
     apply_locale,
     empty_plot,
     filter_country_sort_year,
@@ -408,6 +409,7 @@ def update_func_expenditure_map(
             for i, note in enumerate(notes)
         ],
     )
+    apply_amount_colorbar(fig, lang)
 
     return apply_locale(fig, lang)
 

@@ -14,6 +14,7 @@ from components.country_title import country_title, register_country_title
 from utils import (
     year_ticks,
     add_currency_column,
+    apply_amount_axis,
     apply_locale,
     format_year_axis,
     empty_plot,
@@ -502,6 +503,7 @@ def total_health_figure(df, currency_code, lang="en"):
         plot_bgcolor="white",
         legend=dict(orientation="h", yanchor="bottom", y=1),
     )
+    apply_amount_axis(fig, "yaxis", lang)
 
     return apply_locale(fig, lang)
 
@@ -862,6 +864,7 @@ def render_health_outcome(outcome_data, total_data, country, country_data, lang)
         range=[0, max(pub_exp.per_capita_real_expenditure) * 1.2], secondary_y=False
     )
     fig.update_yaxes(range=[0, 120], secondary_y=True)
+    apply_amount_axis(fig, "yaxis", lang)
 
     narrative = outcome_narrative(uhc, pub_exp, country, currency_code, lang=lang)
     return apply_locale(fig, lang), outcome_measure(lang=lang), narrative

@@ -23,7 +23,13 @@ from components.budget_funding_execution import (
 )
 from constants import END_YEAR, EXECUTION_VIEW_COUNTRIES
 from translations import t
-from utils import apply_locale, empty_plot, format_currency, format_year_axis
+from utils import (
+    apply_amount_axis,
+    apply_locale,
+    empty_plot,
+    format_currency,
+    format_year_axis,
+)
 from viz_theme import DIVERGING_SCALE, QUALITATIVE, QUALITATIVE_ALT
 
 CURRENCY_CODE = "XOF"
@@ -438,6 +444,7 @@ def overview_figure(totals, lang="en"):
         yaxis2=dict(title_text=rate_name, overlaying="y", side="right", ticksuffix="%",
                     rangemode="tozero", showgrid=False, fixedrange=True),
     )
+    apply_amount_axis(fig, "yaxis", lang)
     return apply_locale(_source_note(fig, lang), lang)
 
 
@@ -468,6 +475,7 @@ def stages_figure(stages, lang="en"):
         hovermode="x unified",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
+    apply_amount_axis(fig, "yaxis", lang)
     return apply_locale(_source_note(fig, lang), lang)
 
 
@@ -503,6 +511,7 @@ def ministries_figure(ministries, lang="en"):
         legend=dict(orientation="h", yanchor="bottom", y=1.0, traceorder="reversed"),
         bargap=0.25,
     )
+    apply_amount_axis(fig, "xaxis", lang)
     return apply_locale(_source_note(fig, lang), lang)
 
 
@@ -581,6 +590,7 @@ def investment_figure(parts, lang="en"):
         plot_bgcolor="white",
         legend=dict(orientation="h", yanchor="bottom", y=1.02),
     )
+    apply_amount_axis(fig, "yaxis", lang)
     return apply_locale(_source_note(fig, lang), lang)
 
 

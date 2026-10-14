@@ -24,7 +24,13 @@ from constants import (
 )
 from trend_narrative import InsightExtractor, TrendDetector
 from translations import t
-from utils import add_currency_column, empty_plot, format_currency, apply_locale
+from utils import (
+    add_currency_column,
+    apply_amount_axis,
+    apply_locale,
+    empty_plot,
+    format_currency,
+)
 from viz_theme import SOLID_BLUE, WARM_BRIGHTER
 
 REVENUE_COLOR = SOLID_BLUE
@@ -334,6 +340,9 @@ def combined_figure(national_df, gfs_df, weo_df, currency_code, currency_name=No
         barmode="overlay",
         margin=dict(t=70, b=40, l=100, r=40),
     )
+    # Revenue and expenditure lines above, the balance bars below.
+    apply_amount_axis(fig, "yaxis", lang)
+    apply_amount_axis(fig, "yaxis2", lang)
 
     return apply_locale(fig, lang=lang)
 
