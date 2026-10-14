@@ -318,6 +318,15 @@ def combined_figure(national_df, gfs_df, weo_df, currency_code, currency_name=No
             showarrow=False,
             font=dict(size=11, color="gray"),
         )
+        # The label hangs from the top of the upper panel, so the lines keep
+        # out of that panel's top sixth.
+        lines = pd.concat([
+            df[["revenue", "expenditure"]]
+            for df in (national_df, gfs_pre, weo_post) if df is not None and not df.empty
+        ])
+        low, high = lines.min().min(), lines.max().max()
+        span = (high - low) or abs(high) or 1
+        fig.update_yaxes(range=[low - 0.05 * span, high + 0.25 * span], row=1, col=1)
 
 
     y_unit = currency_name or currency_code or ""
