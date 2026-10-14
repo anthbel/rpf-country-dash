@@ -180,9 +180,11 @@ class SankeyLayoutTest(unittest.TestCase):
     def test_rank_label_ends_before_the_first_node(self):
         fig = self._sankey()
         rank = next(a for a in fig.layout.annotations if a.text == "<b>1er</b>")
-        node_x = fig.data[0].node.x[0]
+        node = fig.data[0].node
         self.assertEqual((rank.xref, rank.xanchor), ("paper", "right"))
-        self.assertLess(rank.x, node_x)
+        self.assertLessEqual(rank.x, node.x[0])
+        # Node x is a node's centre: the label ends left of the node's edge.
+        self.assertLess(rank.xshift, -node.thickness / 2)
 
     def test_region_labels_are_readable(self):
         fig = self._sankey()

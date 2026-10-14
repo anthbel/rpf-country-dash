@@ -179,6 +179,8 @@ UNALLOCATED_ID = "Not broken down by level"
 UNALLOCATED_COLOR = "#BDBDBD"
 # Smallest label size drawn; a box too small for it shows its label on hover.
 TREEMAP_MIN_TEXT_SIZE = 11
+# Height (px) of a sub-function's header: two lines of label.
+TREEMAP_HEADER_HEIGHT = 40
 
 
 def _sub_func_fig(data, func, currency_code, lang="en", sector_total=None):
@@ -224,8 +226,7 @@ def _sub_func_fig(data, func, currency_code, lang="en", sector_total=None):
         ids.append(row.func_sub)
         parents.append("")
         sub_label = translate_func_sub(row.func_sub, lang)
-        # One line: a box header has room for one.
-        labels.append(f"{sub_label} · {format_currency(row.expenditure, currency_code, lang=lang)} ({percent_of_total:.0f}%)")
+        labels.append(f"{sub_label}<br>{format_currency(row.expenditure, currency_code, lang=lang)} ({percent_of_total:.0f}%)")
         values.append(row.expenditure)
         hover_texts.append(f"{t('hover.real_expenditure', lang)}: {format_currency(row.real_expenditure, currency_code, lang=lang)}")
         colors.append(base_color)
@@ -275,7 +276,7 @@ def _sub_func_fig(data, func, currency_code, lang="en", sector_total=None):
             textfont=dict(size=14),
             hovertemplate="<b>%{label}</b><br>%{customdata}<extra></extra>",
             customdata=hover_texts,
-            marker=dict(colors=colors),
+            marker=dict(colors=colors, pad=dict(t=TREEMAP_HEADER_HEIGHT, l=4, r=4, b=4)),
         )
     )
 
@@ -624,6 +625,9 @@ def update_hd_index_map(
     return apply_locale(fig, lang)
 
 
+SANKEY_NODE_THICKNESS = 20
+
+
 def render_func_subnat_rank(subnational_data, country, base_year, func, currency_code, lang="en"):
     if not subnational_data or not country:
         return empty_plot(t("loading", lang)), t("loading", lang)
@@ -683,7 +687,7 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
     fig.add_trace(
         go.Sankey(
             node=dict(
-                thickness=20,
+                thickness=SANKEY_NODE_THICKNESS,
                 line=dict(color="black", width=0.2),
                 label=list(source) + list(dest),
                 y=[(i + 1) / (n + 1) for i in range(n)]
@@ -732,13 +736,15 @@ def render_func_subnat_rank(subnational_data, country, base_year, func, currency
     for i in range(0, n + 1, 10):
         rank_key = rank_keys.get(i)
         if rank_key:
-            # Right-aligned just left of the first column of nodes.
+            # Right-aligned against the first column of nodes, clear of
+            # their half-thickness (node x is a node's centre).
             fig.add_annotation(
                 xref="paper",
                 yref="paper",
                 y=1 - ((i + 1) / (n + 1)),
-                x=node_x[0] - 0.005,
+                x=node_x[0],
                 xanchor="right",
+                xshift=-(SANKEY_NODE_THICKNESS // 2 + 4),
                 yshift=10,
                 text=f"<b>{t(rank_key, lang)}</b>",
                 showarrow=False,

@@ -78,9 +78,8 @@ class RemainderBoxTest(unittest.TestCase):
                                   sector_total=(148e9, 136e9))
         self.assertGreaterEqual(fig.layout.uniformtext.minsize, 11)
         self.assertEqual(fig.layout.uniformtext.mode, "hide")
-        # One line per box header: the sub-function, then its amount and share.
-        label, _ = _top_level(fig)["Primary Education"]
-        self.assertNotIn("<br>", label)
+        # A sub-function's header holds its two lines: name, then amount and share.
+        self.assertGreaterEqual(fig.data[0].marker.pad.t, 2 * 14)
 
 
 if __name__ == "__main__":
