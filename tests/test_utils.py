@@ -365,3 +365,22 @@ class TestYearTicks(unittest.TestCase):
     def test_accepts_a_series_with_duplicates(self):
         years = pd.Series([2023, 2023, 2022, 2021, 2020, 2019])
         self.assertEqual(year_ticks(years), [2020, 2023])
+
+
+class TestApplyLocale(unittest.TestCase):
+    """Plotly's ``separators`` is decimal mark then thousands mark."""
+
+    def test_french_groups_thousands_with_a_narrow_no_break_space(self):
+        from utils import apply_locale
+        fig = apply_locale(go.Figure(), lang="fr")
+        self.assertEqual(fig.layout.separators, ",\u202f")
+
+    def test_portuguese_groups_thousands_with_a_dot(self):
+        from utils import apply_locale
+        fig = apply_locale(go.Figure(), lang="pt")
+        self.assertEqual(fig.layout.separators, ",.")
+
+    def test_english_keeps_plotly_defaults(self):
+        from utils import apply_locale
+        fig = apply_locale(go.Figure(), lang="en")
+        self.assertIsNone(fig.layout.separators)

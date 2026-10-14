@@ -546,17 +546,24 @@ def format_currency_yaxis(fig, currency_name, y_title, x_format="d"):
     return fig
 
 
+# Plotly's ``separators``: decimal mark, then thousands mark. French groups
+# thousands with a narrow no-break space (as Babel's fr_FR does), Brazilian
+# Portuguese with a dot.
+_PLOTLY_SEPARATORS = {
+    "fr": ",\u202f",
+    "pt": ",.",
+}
+
+
 def apply_locale(fig, lang="en"):
     """Set plotly's number-format locale on ``fig`` so its native renderers
     (hovertemplate format specs like ``%{y:.2f}%``, axis tick labels, etc.)
-    produce comma decimals for French/Portuguese and English decimals in English.
-
-    ``separators`` is a 2-char plotly attribute: first = decimal, second =
-    thousands. ``",."`` means comma decimal and dot thousands, matching
-    common French/Portuguese number formatting.
+    produce the language's decimal and thousands marks. English keeps
+    plotly's defaults.
     """
-    if lang in {"fr", "pt"}:
-        fig.update_layout(separators=",.")
+    separators = _PLOTLY_SEPARATORS.get(lang)
+    if separators:
+        fig.update_layout(separators=separators)
     return fig
 
 
