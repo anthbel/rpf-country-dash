@@ -211,7 +211,8 @@ def create_func_growth_figure(df, exp_type, lang="en"):
             dict(
                 xref="paper",
                 yref="paper",
-                x=-0.14,
+                x=0,
+                xanchor="left",
                 y=-0.2,
                 text=t("source.boost_wb", lang),
                 showarrow=False,
