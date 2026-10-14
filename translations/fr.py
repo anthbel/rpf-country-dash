@@ -764,6 +764,8 @@ TRANSLATIONS = {
     "execution.heading.green": "Budget vert",
     "execution.heading.social": "Dépenses sociales",
     "execution.download": "Télécharger les tableaux (Excel)",
+    "execution.download_sigfip": "Rapport d'exécution (tableaux SIGFIP)",
+    "execution.download_ca": "Compte administratif",
     "execution.unspecified": "Non renseigné",
     "execution.measure.dotation_ae": "Dotation AE",
     "execution.measure.dotation_initiale": "Dotation initiale",

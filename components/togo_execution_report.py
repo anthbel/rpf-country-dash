@@ -5,15 +5,13 @@ percentages. Every sheet ends with a total row; the sheets that cover all
 lines (all but « Investissements », which holds capital lines) add up to the same
 totals as « Natures ».
 """
-import io
-import zipfile
-
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 from components import togo_execution as te
+from components.xlsx_output import workbook_bytes
 from constants import translate_func
 from translations import t
 
@@ -188,24 +186,4 @@ def build_report(df, year, lang="fr"):
     _projects(wb, df, year, lang)
     for dim in te.TAG_DIMENSIONS:
         _tag(wb, df, year, dim, lang)
-    wb.properties.creator = None
-    wb.properties.lastModifiedBy = None
-    buffer = io.BytesIO()
-    wb.save(buffer)
-    return _without_application(buffer.getvalue())
-
-
-_APP_PART = "docProps/app.xml"
-_EMPTY_APP = ('<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/'
-              'extended-properties"/>')
-
-
-def _without_application(content):
-    """The xlsx with empty extended properties, so it names no generating application."""
-    source = zipfile.ZipFile(io.BytesIO(content))
-    buffer = io.BytesIO()
-    with source, zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as target:
-        for item in source.infolist():
-            data = _EMPTY_APP.encode() if item.filename == _APP_PART else source.read(item)
-            target.writestr(item, data)
-    return buffer.getvalue()
+    return workbook_bytes(wb)

@@ -583,6 +583,8 @@ TRANSLATIONS = {
     "execution.heading.green": "Orçamento verde",
     "execution.heading.social": "Despesas sociais",
     "execution.download": "Baixar as tabelas (Excel)",
+    "execution.download_sigfip": "Relatório de execução (quadros SIGFIP)",
+    "execution.download_ca": "Conta administrativa",
     "execution.unspecified": "Não informado",
     "execution.measure.dotation_ae": "Autorizações de compromisso",
     "execution.measure.dotation_initiale": "Dotação inicial",

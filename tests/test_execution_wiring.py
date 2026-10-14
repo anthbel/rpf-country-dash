@@ -13,6 +13,7 @@ from queries import QueryService
 from translations.en import TRANSLATIONS as EN
 from translations.fr import TRANSLATIONS as FR
 from translations.pt import TRANSLATIONS as PT
+from tests.execution_detail_fixture import YEAR as DETAIL_YEAR, detail_frame
 from tests.execution_fixture import execution_frame
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -40,6 +41,41 @@ class QueryTest(unittest.TestCase):
         with patch.object(QueryService, "execute_query", return_value=execution_frame()) as run:
             QueryService.get_instance().get_togo_execution_data(persistent=False)
         self.assertFalse(run.call_args.kwargs["persistent"])
+
+
+class DetailQueryTest(unittest.TestCase):
+
+    def tearDown(self):
+        QueryService._instance = None
+
+    @patch("queries.DB_BACKEND", "databricks")
+    @patch("queries.PUBLIC_ONLY", False)
+    def test_reads_one_year_of_budget_lines(self):
+        with patch.object(QueryService, "execute_query", return_value=detail_frame()) as run:
+            QueryService.get_instance().get_togo_execution_detail(DETAIL_YEAR)
+        query = run.call_args.args[0]
+        self.assertIn("prd_mega.boost.tgo_execution_detail", query)
+        self.assertIn(f"year = {DETAIL_YEAR}", query)
+        self.assertNotIn("admin2_code", query)
+        self.assertTrue(run.call_args.kwargs["persistent"])
+
+    @patch("queries.DB_BACKEND", "databricks")
+    @patch("queries.PUBLIC_ONLY", False)
+    def test_reads_one_ministry_without_the_cache(self):
+        with patch.object(QueryService, "execute_query", return_value=detail_frame()) as run:
+            QueryService.get_instance().get_togo_execution_detail("2025", "210", persistent=False)
+        query = run.call_args.args[0]
+        self.assertIn("year = 2025", query)
+        self.assertIn("admin2_code = '210'", query)
+        self.assertFalse(run.call_args.kwargs["persistent"])
+
+    @patch("queries.DB_BACKEND", "databricks")
+    @patch("queries.PUBLIC_ONLY", False)
+    def test_refuses_a_ministry_code_that_is_not_digits(self):
+        with patch.object(QueryService, "execute_query") as run:
+            with self.assertRaises(ValueError):
+                QueryService.get_instance().get_togo_execution_detail(2025, "210' OR '1'='1")
+        run.assert_not_called()
 
 
 class StoreKeyTest(unittest.TestCase):
@@ -80,6 +116,9 @@ class TranslationTest(unittest.TestCase):
         self.assertEqual(FR["nav.execution"], "Exécution du budget")
         self.assertEqual(FR["execution.download"], "Télécharger les tableaux (Excel)")
         self.assertEqual(FR["execution.heading.overview"], "Budget initial, budget final et exécution")
+        self.assertEqual(FR["execution.download_sigfip"], "Rapport d'exécution (tableaux SIGFIP)")
+        self.assertEqual(FR["execution.download_ca"], "Compte administratif")
+        self.assertEqual(EN["execution.download_ca"], "Administrative account")
 
 
 class RequirementsTest(unittest.TestCase):

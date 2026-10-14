@@ -15,6 +15,7 @@ from babel.numbers import format_decimal
 from dash import html
 
 import server_store
+from queries import QueryService
 from components.budget_funding_execution import (
     DOMESTIC_FUNDED_COLOR,
     FOREIGN_FUNDED_COLOR,
@@ -37,6 +38,15 @@ KEY_COLUMNS = [
     "econ1_code", "econ1", "econ", "funding_code", "funding", "funder",
     "gender_code", "gender", "green_code", "green", "social_code", "social",
     "project_code", "project",
+]
+
+# Keys of boost.tgo_execution_detail, one row per budget line (imputation)
+DETAIL_KEY_COLUMNS = [
+    "country_name", "budget_type_code", "budget_type", "admin2_code", "admin2", "admin2_short",
+    "prog_code", "prog", "action_code", "action", "admin3_code", "admin3", "admin4_code", "admin4",
+    "admin5_code", "func3_code", "econ1_code", "econ1", "econ2_code", "econ2", "econ3_code", "econ3",
+    "econ4_code", "econ4", "funding_code", "funder", "gender_code", "green_code", "social_code",
+    "imputation",
 ]
 
 CAPITAL_CODE = "5"
@@ -68,7 +78,7 @@ _LOCALES = {"en": "en_US", "fr": "fr_FR", "pt": "pt_BR"}
 
 # --- Loading ---------------------------------------------------------------
 
-def normalise_execution(df):
+def normalise_execution(df, keys=KEY_COLUMNS):
     """Empty strings for null keys, zeros for null amounts, a boolean ``pip``.
 
     Null keys stay as their own group ("") in every breakdown, so each
@@ -77,7 +87,7 @@ def normalise_execution(df):
     df = df.copy()
     for col in MEASURES:
         df[col] = pd.to_numeric(df[col]).fillna(0)
-    for col in KEY_COLUMNS:
+    for col in keys:
         if col in df.columns:
             df[col] = [("" if v is None or (isinstance(v, float) and math.isnan(v)) else str(v))
                        for v in df[col]]
@@ -85,6 +95,11 @@ def normalise_execution(df):
         df["pip"] = [bool(v) if v is not None and not pd.isna(v) else False for v in df["pip"]]
     df["year"] = df["year"].astype(int)
     return df
+
+
+def normalise_detail(df):
+    """The detail table's rows, normalised as ``normalise_execution`` does."""
+    return normalise_execution(df, DETAIL_KEY_COLUMNS)
 
 
 def load_execution(country):
@@ -96,6 +111,16 @@ def load_execution(country):
         return None
     df = df[df["country_name"] == country]
     return None if df.empty else df
+
+
+def load_execution_detail(country, year, admin2_code=None):
+    """The year's budget lines for ``country`` (one ministry's when ``admin2_code``
+    is given), normalised, or None when there are none."""
+    if country not in EXECUTION_VIEW_COUNTRIES:
+        return None
+    df = QueryService.get_instance().get_togo_execution_detail(year, admin2_code)
+    df = df[df["country_name"] == country]
+    return None if df.empty else normalise_detail(df)
 
 
 # --- Preparation -----------------------------------------------------------
