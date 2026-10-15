@@ -20,7 +20,7 @@ from utils import (
 
 DEFAULT_CROP = "Maize (corn)"
 SPENDING_COLOR, BUDGET_COLOR, REAL_COLOR = "#2E8B57", "#C9D3DD", "#1B2A41"
-PRODUCTION_COLOR, YIELD_COLOR = "#F2B705", "#006A4E"
+PRODUCTION_COLOR, YIELD_COLOR, CROP_BUDGET_COLOR = "#F2B705", "#006A4E", "#1F5F99"
 
 
 # --- Data ------------------------------------------------------------------
@@ -96,7 +96,26 @@ def spending_figure(df, lang):
     return apply_locale(fig, lang)
 
 
-def crop_figure(df, crop, lang):
+def _add_budget_axis(fig, spending, lang):
+    """Approved budget and executed spending on agriculture, on a third axis
+    to the right of the yield axis."""
+    for column, name_key, dash in (("budget", "agriculture.trace.budget", "dash"),
+                                   ("expenditure", "agriculture.trace.executed", "solid")):
+        fig.add_trace(go.Scatter(
+            name=t(name_key, lang), x=spending["year"], y=spending[column], yaxis="y3",
+            mode="lines+markers", line=dict(color=CROP_BUDGET_COLOR, dash=dash),
+            customdata=_amount_hover(spending[column], lang),
+            hovertemplate="%{customdata}<extra>" + t(name_key, lang) + "</extra>",
+        ))
+    fig.update_layout(
+        xaxis=dict(domain=[0, 0.84]),
+        yaxis3=dict(title=t("agriculture.axis.budget", lang), overlaying="y", side="right",
+                    anchor="free", position=0.97, rangemode="tozero", showgrid=False, fixedrange=True),
+    )
+    apply_amount_axis(fig, "yaxis3", lang)
+
+
+def crop_figure(df, crop, lang, spending=None):
     rows = df[df["item"] == crop]
     if rows.empty:
         return empty_plot(t("error.no_data_period", lang))
@@ -119,10 +138,13 @@ def crop_figure(df, crop, lang):
                      rangemode="tozero", showgrid=False)
     fig.update_layout(
         hovermode="x unified", plot_bgcolor="white",
-        title=t("agriculture.chart.crop", lang, crop=label),
+        title=t("agriculture.chart.crop_budget" if spending is not None else "agriculture.chart.crop",
+                lang, crop=label),
         legend=dict(orientation="h", yanchor="bottom", y=1), margin=dict(t=120),
     )
     apply_amount_axis(fig, "yaxis", lang)
+    if spending is not None:
+        _add_budget_axis(fig, spending, lang)
     return apply_locale(fig, lang)
 
 
@@ -141,7 +163,24 @@ def spending_narrative(df, lang):
     )
 
 
-def crop_narrative(df, crop, lang):
+def _spending_and_production(rows, spending, lang):
+    """Executed spending and the crop's production over the years both have."""
+    both = rows.merge(spending, on="year").dropna(subset=["production_t", "expenditure"])
+    if len(both) < 2:
+        return ""
+    first, last = both.iloc[0], both.iloc[-1]
+    return t(
+        "agriculture.narrative.crop_spending", lang,
+        start=int(first["year"]), end=int(last["year"]),
+        s_first=millify(first["expenditure"], lang, decimals=1),
+        s_last=millify(last["expenditure"], lang, decimals=1),
+        s_change=(last["expenditure"] / first["expenditure"] - 1) * 100,
+        p_first=format_amount(first["production_t"], lang), p_last=format_amount(last["production_t"], lang),
+        p_change=(last["production_t"] / first["production_t"] - 1) * 100,
+    )
+
+
+def crop_narrative(df, crop, lang, spending=None):
     rows = df[(df["item"] == crop)].dropna(subset=["production_t"])
     if len(rows) < 2:
         return t("error.data_unavailable", lang)
@@ -156,6 +195,9 @@ def crop_narrative(df, crop, lang):
     flag_key = f"agriculture.flag.{last['production_flag']}"
     if t(flag_key, lang) != flag_key:
         text += t("agriculture.narrative.flag", lang, end=int(last["year"]), flag=t(flag_key, lang))
+    if spending is not None:
+        text += _spending_and_production(rows[["year", "production_t"]],
+                                         spending[["year", "expenditure"]], lang)
     return text
 
 
@@ -165,7 +207,7 @@ def render_spending(df, lang):
     return spending_figure(df, lang), spending_narrative(df, lang)
 
 
-def render_crop(df, crop, lang):
+def render_crop(df, crop, lang, spending=None):
     if df is None or crop is None:
         return unavailable(lang)
-    return crop_figure(df, crop, lang), crop_narrative(df, crop, lang)
+    return crop_figure(df, crop, lang, spending), crop_narrative(df, crop, lang, spending)

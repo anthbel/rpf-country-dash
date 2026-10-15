@@ -106,6 +106,20 @@ class FigureTest(StoreTest):
         self.assertEqual(fig.layout.yaxis.title.text, "Production (tonnes)")
         self.assertEqual(fig.layout.yaxis2.title.text, "Rendement (kg/ha)")
 
+    def test_crop_figure_shows_the_agriculture_budget_on_a_third_axis(self):
+        fig = ag.crop_figure(ag.load_crops("Togo"), "Maize (corn)", "fr", spending=ag.load_spending("Togo"))
+        budget = [trace for trace in fig.data if trace.name in ("Budget approuvé", "Dépense exécutée")]
+        self.assertEqual([trace.yaxis for trace in budget], ["y3", "y3"])
+        self.assertEqual(fig.layout.yaxis3.title.text, "Budget d'agriculture")
+        self.assertEqual(fig.layout.title.text, "Maïs : production, rendement et budget d'agriculture")
+        yield_color = next(trace.line.color for trace in fig.data if trace.name == "Rendement")
+        self.assertNotIn(yield_color, [trace.line.color for trace in budget])
+        self.assertTrue(all(label == "0" or label.endswith(" Md") for label in fig.layout.yaxis3.ticktext))
+
+    def test_crop_figure_without_spending_keeps_two_axes(self):
+        fig = ag.crop_figure(ag.load_crops("Togo"), "Maize (corn)", "fr")
+        self.assertEqual(len(fig.data), 2)
+
     def test_missing_data_reads_unavailable(self):
         fig, text = ag.render_spending(None, "fr")
         self.assertEqual(text, "Données non disponibles pour cette période.")
@@ -116,6 +130,11 @@ class NarrativeTest(StoreTest):
         text = ag.spending_narrative(ag.load_spending("Togo"), "fr")
         self.assertIn("de 24,3 Md en 2021 à 36,6 Md en 2024, avec un maximum de 49,8 Md en 2023", text)
         self.assertIn("68,1 % du budget approuvé", text)
+
+    def test_crop_sentence_sets_spending_and_production_side_by_side(self):
+        text = ag.crop_narrative(ag.load_crops("Togo"), "Maize (corn)", "fr", spending=ag.load_spending("Togo"))
+        self.assertIn("De 2021 à 2024, la dépense d'agriculture exécutée est passée de 24,3 Md à 36,6 Md (+50,6 %) "
+                      f"et la production de cette culture de 929{NNBSP}020 à 1{NNBSP}010{NNBSP}000 tonnes (+8,7 %).", text)
 
     def test_crop_sentence_names_the_fao_flag(self):
         text = ag.crop_narrative(ag.load_crops("Togo"), "Maize (corn)", "fr")

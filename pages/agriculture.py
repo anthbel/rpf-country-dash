@@ -125,4 +125,5 @@ def update_crop_options(store, country, lang, current):
 def update_crops(store, country, crop, lang):
     lang = lang or "en"
     df = ag.load_crops(country) if _ready(store, country, "crops") else None
-    return ag.render_crop(df, crop, lang)
+    spending = ag.load_spending(country) if store.get("spending") else None
+    return ag.render_crop(df, crop, lang, spending)
