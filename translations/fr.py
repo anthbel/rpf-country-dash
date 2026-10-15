@@ -678,7 +678,7 @@ TRANSLATIONS = {
     "source_name.pefa_secretariat": "Secrétariat PEFA",
     "source_name.imf_gfs": "Statistiques de finances publiques — État de situation des opérations",
     "source_name.imf_weo": "Perspectives de l'économie mondiale du FMI",
-    "source_name.togo_dgb": "Direction Générale du Budget du Togo — Rapport d'exécution du budget de l'État",
+    "source_name.togo_dgb": "Direction Générale du Budget et des Finances du Togo (DGBF)",
 
     # --- Source metadata modal (descriptions) ---
     "source.poverty_rate.description": "Les seuils de pauvreté varient selon la classification de revenu des pays : 3,00 $ pour les pays à faible revenu, 4,20 $ pour les pays à revenu intermédiaire (tranche inférieure) et 8,30 $ pour les pays à revenu intermédiaire (tranche supérieure) et à revenu élevé.",
@@ -691,9 +691,9 @@ TRANSLATIONS = {
     "source.imf_weo.label": "PEM",
     "source.imf_weo.description": "Utilise les valeurs publiées par le FMI pour les Recettes (GGR) et les Dépenses (GGX) au niveau des Administrations publiques.",
     "source.togo_dgb.label": "Rapport officiel du Togo",
-    "source.togo_dgb.description": "Recettes et dépenses réalisées issues du Rapport d'exécution du budget de l'État annuel. Un même montant non liquide (recette non liquide = dépenses en atténuation de recettes) est soustrait des recettes et des dépenses afin d'assurer la comparabilité avec les données du FMI.",
+    "source.togo_dgb.description": "Recettes et dépenses telles que publiées par la DGBF. Lorsque le montant non liquide (recette non liquide = dépenses en atténuation de recettes) est renseigné pour chaque année, il est soustrait des recettes et des dépenses afin d'assurer la comparabilité avec les données du FMI\u00a0; sinon, les montants sont présentés tels que publiés. Le solde est le même dans les deux cas.",
     "chart.budget_execution.info": "Le taux d'exécution correspond aux dépenses réelles rapportées au budget approuvé (dépenses ÷ budget approuvé). Selon le cadre PEFA (PI-1), une exécution à ±5 % du budget approuvé obtient la note A (la plus crédible), à ±10 % la note B, et à ±15 % la note C ; au-delà, c'est un D. La vue en écart présente la même donnée comme écart par rapport à 100 %. Le fond ombré indique ces mêmes zones — A, B et C imbriquées autour de la ligne de référence, D au-delà —, chacune nommée sur l'échelle de droite. Le graphique est toujours tracé de 80 % à 120 %, afin qu'une même distance ait partout le même sens ; une année au-delà apparaît sous forme de flèche au bord, accompagnée de sa valeur réelle.",
-    "chart.revenue_expenditure_combined.info": "La vue composite combine les sources disponibles sur une même chronologie. Lorsqu'un rapport national officiel est disponible, il est utilisé en priorité ; les SFP du FMI complètent les années historiques antérieures, et les PEM fournissent les projections. Les recettes et dépenses sont représentées par des courbes dans le panneau supérieur ; le solde (Recettes − Dépenses) apparaît sous forme de barres dans le panneau inférieur, où les valeurs positives indiquent un excédent et les valeurs négatives un déficit. Les vues à source unique affichent toutes les années de données disponibles pour cette source.",
+    "chart.revenue_expenditure_combined.info": "Cette section propose jusqu'à trois vues, selon les données disponibles pour le pays. Rapport officiel\u00a0: les chiffres nationaux tels que publiés (pour le Togo, ceux de la DGBF). SFP\u00a0: les Statistiques de finances publiques du FMI, au niveau de l'Administration centrale budgétaire. PEM\u00a0: les Perspectives de l'économie mondiale du FMI, au niveau des Administrations publiques, projections comprises. Chaque vue affiche toutes les années de données disponibles pour sa source. Les recettes et dépenses sont représentées par des courbes dans le panneau supérieur\u00a0; le solde (Recettes − Dépenses) apparaît sous forme de barres dans le panneau inférieur, où les valeurs positives indiquent un excédent et les valeurs négatives un déficit.",
 
     # --- Deficit / solde budgétaire ---
     "deficit.view.label": "Source des données :",
@@ -749,6 +749,7 @@ TRANSLATIONS = {
     "deficit.narrative.national": "Selon {source_name}, le budget {avg_phrase} {year_phrase}.",
     "deficit.narrative.default_source": "le rapport officiel",
     "deficit.narrative.source.togo_dgb_budget_execution": "le Rapport d'exécution du budget de l'État",
+    "deficit.narrative.source.togo_dgbf": "les chiffres de la DGBF",
 
     "deficit.narrative.prefix.gfs_historical": "D'après les données historiques des SFP",
     "deficit.narrative.prefix.gfs": "D'après les données des SFP",

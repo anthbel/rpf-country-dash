@@ -510,7 +510,7 @@ TRANSLATIONS = {
     "source_name.pefa_secretariat": "Secretariado PEFA",
     "source_name.imf_gfs": "Estatísticas de Finanças Públicas do FMI - Demonstrativo de Operações",
     "source_name.imf_weo": "Perspectivas da Economia Mundial do FMI",
-    "source_name.togo_dgb": "Direção Geral do Orçamento do Togo - Relatório de execução do orçamento do Estado",
+    "source_name.togo_dgb": "Direção Geral do Orçamento e das Finanças do Togo (DGBF)",
     "source.poverty_rate.description": "As linhas de pobreza variam conforme a classificação de renda do país: US$ 3,00 para baixa renda, US$ 4,20 para renda média baixa e US$ 8,30 para renda média alta e alta renda.",
     "source.subnational_poverty.description": "As linhas de pobreza variam conforme a classificação de renda do país: US$ 3,00 para baixa renda, US$ 4,20 para renda média baixa e US$ 8,30 para renda média alta e alta renda. As taxas de pobreza subnacionais vêm do Global Subnational Atlas of Poverty (GSAP) e da Subnational Poverty and Inequality Database (SPID).",
     "source.pefa.description": "As avaliações PEFA usam notas por letras (A a D, com modificadores +). Neste painel, as notas são convertidas em pontuações numéricas (A=4, B+=3,5, B=3, C+=2,5, C=2, D+=1,5, D=1).",
@@ -521,9 +521,9 @@ TRANSLATIONS = {
     "source.imf_weo.label": "WEO",
     "source.imf_weo.description": "Usa valores reportados pelo FMI para Receita (GGR) e Despesa (GGX) no nível do Governo Geral.",
     "source.togo_dgb.label": "Relatório oficial do Togo",
-    "source.togo_dgb.description": "Receita e despesa realizadas a partir do Relatório anual de Execução Orçamentária. Valores não monetários equivalentes são subtraídos de receita e despesa para comparabilidade com os dados do FMI.",
+    "source.togo_dgb.description": "Receita e despesa conforme publicadas pela DGBF. Quando o valor não monetário (recette non liquide = dépenses en atténuation de recettes) é informado para todos os anos, ele é subtraído da receita e da despesa para comparabilidade com os dados do FMI; caso contrário, os valores são apresentados conforme publicados. O saldo é o mesmo em ambos os casos.",
     "chart.budget_execution.info": "A taxa de execução é a despesa efetiva como proporção do orçamento aprovado (despesa ÷ orçamento aprovado). Seguindo o marco PEFA (PI-1), uma execução dentro de ±5% do orçamento aprovado recebe nota A (a mais credível), ±10% nota B, e ±15% nota C; além disso, é D. A visão de variação mostra o mesmo valor como desvio em relação a 100%. O fundo sombreado indica essas mesmas zonas — A, B e C aninhadas em torno da linha de referência, D além delas —, cada uma nomeada na escala à direita. O gráfico é sempre desenhado de 80% a 120%, para que a mesma distância signifique o mesmo em todos os gráficos; um ano além disso aparece como uma seta na borda, com o seu valor real indicado.",
-    "chart.revenue_expenditure_combined.info": "A visão composta combina as fontes disponíveis em uma única linha do tempo. Quando há relatório nacional oficial disponível, ele tem prioridade; o GFS do FMI preenche anos históricos anteriores, e o WEO projeta anos futuros. Receita e despesa aparecem como linhas no painel superior; o saldo (Receita - Despesa) aparece como barras no painel inferior.",
+    "chart.revenue_expenditure_combined.info": "Esta seção oferece até três visões, conforme os dados disponíveis para o país. Relatório oficial: os números nacionais conforme publicados (para o Togo, os dados da DGBF). GFS: Estatísticas de Finanças Públicas do FMI, no nível do Governo Central Orçamentário. WEO: Perspectivas da Economia Mundial do FMI, no nível do Governo Geral, incluindo projeções. Cada visão exibe todos os anos de dados disponíveis em sua fonte. Receita e despesa aparecem como linhas no painel superior; o saldo (Receita - Despesa) aparece como barras no painel inferior, onde valores positivos indicam superávit e valores negativos, déficit.",
 
     # --- Déficit / fiscal balance ---
     "deficit.view.label": "Fonte de dados:",
@@ -568,6 +568,7 @@ TRANSLATIONS = {
     "deficit.narrative.national": "Segundo {source_name}, o orçamento {avg_phrase} {year_phrase}.",
     "deficit.narrative.default_source": "o relatório oficial",
     "deficit.narrative.source.togo_dgb_budget_execution": "Relatório de Execução Orçamentária da DGB do Togo",
+    "deficit.narrative.source.togo_dgbf": "os dados da DGBF",
     "deficit.narrative.prefix.gfs_historical": "Com base em dados históricos do GFS",
     "deficit.narrative.prefix.gfs": "Com base em dados do GFS",
     "deficit.narrative.prefix.weo": "Com base nas estimativas do WEO",

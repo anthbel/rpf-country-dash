@@ -578,7 +578,7 @@ TRANSLATIONS = {
     "source_name.pefa_secretariat": "PEFA Secretariat",
     "source_name.imf_gfs": "Government Finance Statistics — Statement of Operations",
     "source_name.imf_weo": "IMF World Economic Outlook",
-    "source_name.togo_dgb": "Togo Direction Générale du Budget — Rapport d'exécution du budget de l'État",
+    "source_name.togo_dgb": "Togo Direction Générale du Budget et des Finances (DGBF)",
 
     # --- Source metadata modal (descriptions) ---
     "source.poverty_rate.description": "Poverty thresholds vary by country income classification: $3.00 for Low Income, $4.20 for Lower Middle Income, and $8.30 for Upper Middle and High Income countries.",
@@ -591,9 +591,9 @@ TRANSLATIONS = {
     "source.imf_weo.label": "WEO",
     "source.imf_weo.description": "Uses values reported by the IMF for Revenue (GGR) and Expenditure (GGX) at the General Government level.",
     "source.togo_dgb.label": "Togo Official Report",
-    "source.togo_dgb.description": "Realized revenue and expenditure from the annual Budget Execution Report. Equal non-cash amounts (recette non liquide = dépenses en atténuation de recettes) are subtracted from both revenue and expenditure for comparability with IMF data.",
+    "source.togo_dgb.description": "Revenue and expenditure as published by the DGBF. When the non-cash amount (recette non liquide = dépenses en atténuation de recettes) is reported for every year, it is subtracted from both revenue and expenditure for comparability with IMF data; otherwise the amounts are shown as published. The balance is the same either way.",
     "chart.budget_execution.info": "The execution rate is actual spending as a share of the approved budget (spending ÷ approved budget). Following the PEFA framework (PI-1), execution within ±5% of the approved budget scores an A (most credible), ±10% a B, and ±15% a C; beyond that is a D. The variance view shows the same figure as the deviation from 100%. The shaded background marks these same zones — A, B and C nested around the reference line, D beyond them — and the right-hand scale names each one. The chart is always drawn from 80% to 120%, so the same distance means the same thing on every chart; a year beyond that appears as an arrow at the edge, labelled with its actual figure.",
-    "chart.revenue_expenditure_combined.info": "The composite view combines available sources on one timeline. Where an official national report is available, it takes priority; IMF GFS fills earlier historical years, and WEO projects forward. Revenue and expenditure are shown as lines in the upper panel; the balance (Revenue − Expenditure) is shown as bars in the lower panel, where positive values indicate a surplus and negative values a deficit. Single-source views display every year of data available from that source.",
+    "chart.revenue_expenditure_combined.info": "This section offers up to three views, depending on the data available for the country. Official Report: national figures as published (for Togo, the DGBF's figures). GFS: IMF Government Finance Statistics, at the Budgetary Central Government level. WEO: IMF World Economic Outlook, at the General Government level, including projections. Each view displays every year of data available from its source. Revenue and expenditure are shown as lines in the upper panel; the balance (Revenue − Expenditure) is shown as bars in the lower panel, where positive values indicate a surplus and negative values a deficit.",
 
     # --- Deficit / fiscal balance ---
     "deficit.view.label": "Data source:",
@@ -645,6 +645,7 @@ TRANSLATIONS = {
     "deficit.narrative.national": "According to {source_name}, the budget {avg_phrase} {year_phrase}.",
     "deficit.narrative.default_source": "the official report",
     "deficit.narrative.source.togo_dgb_budget_execution": "Togo DGB Budget Execution Report",
+    "deficit.narrative.source.togo_dgbf": "DGBF figures",
 
     "deficit.narrative.prefix.gfs_historical": "Based on historical GFS data",
     "deficit.narrative.prefix.gfs": "Based on GFS data",
