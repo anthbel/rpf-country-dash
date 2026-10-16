@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from queries import QueryService
 from components.func_operational_vs_capital_spending import prepare_prop_econ_by_func_df
+from components.togo_execution import normalise_execution
 import server_store
 
 
@@ -57,10 +58,17 @@ def _add_real_funding_split_columns(df):
     if "foreign_funded_budget" not in df.columns:
         if {"budget", "domestic_funded_budget"}.issubset(df.columns):
             foreign = df["budget"] - df["domestic_funded_budget"]
-            # domestic == budget is used in sector data as "foreign unknown".
-            foreign = foreign.where(
-                df["domestic_funded_budget"].round(0) != df["budget"].round(0)
-            )
+            # domestic == budget is the sector data's "foreign unknown" for a
+            # country whose rows never split a budget. Where some of its rows
+            # do, the split is known and domestic == budget means no foreign
+            # funding.
+            all_domestic = df["domestic_funded_budget"].round(0) == df["budget"].round(0)
+            split = foreign.notna() & ~all_domestic
+            if "country_name" in df.columns:
+                country_splits = split.groupby(df["country_name"]).transform("any")
+            else:
+                country_splits = pd.Series(split.any(), index=df.index)
+            foreign = foreign.where(~all_domestic | country_splits)
             df["foreign_funded_budget"] = foreign
         else:
             df["foreign_funded_budget"] = np.nan
@@ -263,6 +271,7 @@ function_data_mapping = {
     "edu_private_expenditure": lambda: _db().get_edu_private_expenditure(),
     "togo_revenue_budget": lambda: _db().get_togo_revenue_budget_data(),
     "government_revenue_expenditure": lambda: _db().get_government_revenue_expenditure_data(),
+    "togo_execution": lambda: normalise_execution(_db().get_togo_execution_data()),
     # Transformation loaders
     "func_econ_raw": load_func_econ_raw,
     "func_by_country_year": load_func_by_country_year,
